@@ -35,3 +35,15 @@ pnpm approve-builds
 pnpm install
 ```
 
+## Docker (share / run without Node on the machine)
+
+From the project root:
+
+```bash
+docker compose up --build
+```
+
+Open:
+
+- `http://localhost:8080`
+
