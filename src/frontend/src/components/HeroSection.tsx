@@ -1,166 +1,171 @@
-import { useEffect, useState } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 interface HeroSectionProps {
-  bgImage: string;
+  /** Background photo URL. Omit or leave empty for a neutral gradient until an asset is added. */
+  bgImage?: string;
+  /** Background video URL (e.g. mp4). When provided, it takes precedence over bgImage. */
+  bgVideo?: string;
+  /** Optional poster image for bgVideo (shown while video loads). */
+  bgVideoPoster?: string;
   eyebrow?: string;
-  title: React.ReactNode;
+  /** Main visual heading; omit on home hero when only video + CTAs are desired */
+  title?: ReactNode;
+  /** When `title` is omitted, use for the document’s primary `<h1>` (screen readers only) */
+  screenReaderHeading?: string;
   subtitle?: string;
   description?: string;
-  children?: React.ReactNode;
-  bottomNote?: React.ReactNode;
+  children?: ReactNode;
+  bottomNote?: ReactNode;
+  /** `light` / `medium`: no overlay. `dark`: flat translucent scrim for contrast (no gradients). */
   overlay?: "light" | "medium" | "dark";
   titleClass?: string;
-  titleStyle?: React.CSSProperties;
+  titleStyle?: CSSProperties;
   /** Optional: blur the hero background image slightly (layout-only, not scroll-driven). */
   bgBlurPx?: number;
   /** Optional: dim/brighten the hero background image (layout-only, not scroll-driven).
    * 1 = unchanged, 0.85 = slightly dim.
    */
   bgBrightness?: number;
-  /** When true, hero background fades out as user scrolls down (main page only) */
-  fadeOnScroll?: boolean;
-  /** Base color behind the hero image (section bg and bottom fade). Default charcoal (grey); use "black" for pure black. */
+  /** Base color behind the hero image (section bg). Default charcoal (grey); use "black" for pure black. */
   baseColor?: "charcoal" | "black";
+  /** Max width class for the inner content column (default max-w-5xl). */
+  contentClassName?: string;
+  /** Allow dropdowns (search bar) to extend past hero bottom; raises stacking above following sections */
+  allowSearchOverflow?: boolean;
+  /** White title + subtle outline for readability on photography heroes */
+  titleOnPhoto?: boolean;
 }
 
 export function HeroSection({
   bgImage,
+  bgVideo,
+  bgVideoPoster,
   eyebrow,
   title,
+  screenReaderHeading,
   subtitle,
   description,
   children,
   bottomNote,
-  overlay = "medium",
+  overlay = "light",
   titleClass = "",
   titleStyle,
   bgBlurPx = 0,
   bgBrightness = 1,
-  fadeOnScroll = false,
   baseColor = "charcoal",
+  contentClassName = "max-w-5xl",
+  allowSearchOverflow = false,
+  titleOnPhoto = false,
 }: HeroSectionProps) {
-  const [bgOffset, setBgOffset] = useState(0);
-  const [bgOpacity, setBgOpacity] = useState(1);
+  const hasVisibleTitle =
+    title != null &&
+    title !== false &&
+    (typeof title !== "string" || title.trim().length > 0);
+  const hasPhoto = Boolean(bgImage?.trim());
+  const hasVideo = Boolean(bgVideo?.trim());
 
-  useEffect(() => {
-    const onScroll = () => {
-      const y = window.scrollY;
-      const vh = window.innerHeight;
-
-      // Parallax: reduced — background moves only slightly with scroll
-      const clamped = Math.min(y * 0.15, vh * 0.15);
-      setBgOffset(clamped);
-
-      // Force visible fade: over first 500px of scroll, hero image goes 1 → 0 (very obvious)
-      if (fadeOnScroll) {
-        const opacity = Math.max(0, 1 - y / 500);
-        setBgOpacity(opacity);
-      }
-    };
-
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [fadeOnScroll]);
+  /** Flat scrim only — no gradients on the media layer */
+  const darkScrim = overlay === "dark";
 
   return (
     <section
-      className={`hero-section snap-section${baseColor === "black" ? " hero-section--black" : ""}`}
+      className={`hero-section snap-section${baseColor === "black" ? " hero-section--black" : ""}${allowSearchOverflow ? " hero-section--search-visible" : ""}`}
     >
-      {/* Wrapper so opacity is applied to the whole background layer; fade is impossible to miss */}
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          opacity: fadeOnScroll ? bgOpacity : 1,
-          willChange: fadeOnScroll ? "opacity" : undefined,
-        }}
-        aria-hidden
-      >
+      <div className="absolute inset-0 z-0" aria-hidden>
         <div
           className="hero-bg"
           style={{
-            backgroundImage: `url(${bgImage})`,
-            transform: `translateY(${bgOffset * -1}px)`,
-            filter: (() => {
-              const parts: string[] = [];
-              if (bgBlurPx) parts.push(`blur(${bgBlurPx}px)`);
-              if (bgBrightness !== 1) parts.push(`brightness(${bgBrightness})`);
-              return parts.length ? parts.join(" ") : undefined;
-            })(),
+            backgroundImage:
+              !hasVideo && hasPhoto
+                ? `url(${bgImage})`
+                : "linear-gradient(145deg, #fdfcfa 0%, #f4efe6 38%, #ebe4d6 72%, #e3dac9 100%)",
+            filter: !hasVideo && hasPhoto
+              ? (() => {
+                  const parts: string[] = [];
+                  if (bgBlurPx) parts.push(`blur(${bgBlurPx}px)`);
+                  if (bgBrightness !== 1)
+                    parts.push(`brightness(${bgBrightness})`);
+                  return parts.length ? parts.join(" ") : undefined;
+                })()
+              : undefined,
           }}
         />
+        {hasVideo && (
+          <video
+            className="absolute inset-0 h-full w-full object-cover pointer-events-none"
+            style={{
+              filter:
+                bgBrightness !== 1 ? `brightness(${bgBrightness})` : undefined,
+            }}
+            src={bgVideo}
+            poster={bgVideoPoster}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            aria-hidden
+          />
+        )}
       </div>
 
-      {/* Layer 1: Bottom-weighted directional gradient for text legibility */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `linear-gradient(
-            to bottom,
-            rgba(15,15,15,0.08) 0%,
-            rgba(15,15,15,0.0) 30%,
-            rgba(15,15,15,0.35) 65%,
-            rgba(15,15,15,0.88) 100%
-          )`,
-        }}
-      />
+      {darkScrim ? (
+        <div
+          className="pointer-events-none absolute inset-0 bg-black/22"
+          aria-hidden
+        />
+      ) : null}
 
-      {/* Layer 3: Subtle top shadow for nav legibility */}
+      {/* Content — no entrance motion on hero chrome */}
       <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(to bottom, rgba(15,15,15,0.45) 0%, transparent 18%)",
-        }}
-      />
-
-      {/* Noise grain texture overlay (light so hero image stays crisp) */}
-      <div
-        className="absolute inset-0 opacity-[0.06] mix-blend-overlay pointer-events-none"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-        }}
-      />
-
-      {/* Content */}
-      <div className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto w-full pt-3 sm:pt-6 md:pt-10">
+        className={`relative z-10 mx-auto w-full px-4 pt-3 text-center sm:px-6 sm:pt-6 md:pt-10 ${contentClassName}`}
+      >
         {eyebrow && (
           <p
-            className="eyebrow mb-7 opacity-0 animate-fade-up"
-            style={{ animationDelay: "0.1s", animationFillMode: "forwards" }}
+            className={`eyebrow mb-7${titleOnPhoto ? " hero-eyebrow-photo" : ""}`}
           >
             {eyebrow}
           </p>
         )}
 
-        <div
-          className="gold-divider mb-10 opacity-0 animate-fade-up"
-          style={{ animationDelay: "0.15s", animationFillMode: "forwards" }}
-        />
+        {(eyebrow || hasVisibleTitle) && (
+          <div className="gold-divider mb-10" />
+        )}
 
-        <h1
-          className={`font-display text-ivory opacity-0 animate-fade-up ${titleClass}`}
-          style={{
-            fontFamily: "Instrument Serif, Georgia, serif",
-            fontSize: "clamp(3rem, 7.5vw, 7rem)",
-            fontWeight: 500,
-            letterSpacing: "0.03em",
-            lineHeight: 1.02,
-            marginBottom: "2rem",
-            animationDelay: "0.2s",
-            animationFillMode: "forwards",
-            ...titleStyle,
-          }}
-        >
-          {title}
-        </h1>
+        {hasVisibleTitle ? (
+          <h1
+            className={`font-display ${titleOnPhoto ? "hero-title-photo" : "text-charcoal"} ${titleClass}`}
+            style={{
+              fontFamily: "Instrument Serif, Georgia, serif",
+              fontSize: "clamp(3rem, 7.5vw, 7rem)",
+              fontWeight: 500,
+              letterSpacing: "0.03em",
+              lineHeight: 1.02,
+              marginBottom: "2rem",
+              ...(titleOnPhoto
+                ? {
+                    color: "#fafaf9",
+                    WebkitTextStroke: "0.65px rgba(87, 83, 78, 0.95)",
+                    paintOrder: "stroke fill",
+                    textShadow:
+                      "0 1px 2px rgba(0, 0, 0, 0.42), 0 2px 14px rgba(0, 0, 0, 0.28), 0 0 1px rgba(0, 0, 0, 0.35)",
+                  }
+                : {}),
+              ...titleStyle,
+            }}
+          >
+            {title}
+          </h1>
+        ) : (
+          screenReaderHeading && (
+            <h1 className="sr-only">{screenReaderHeading}</h1>
+          )
+        )}
 
         {subtitle && (
           <p
-            className="eyebrow text-gold-light mb-8 opacity-0 animate-fade-up"
+            className="eyebrow text-gold-light mb-8"
             style={{
-              animationDelay: "0.32s",
-              animationFillMode: "forwards",
               letterSpacing: "0.4em",
             }}
           >
@@ -170,15 +175,13 @@ export function HeroSection({
 
         {description && (
           <p
-            className="font-body text-ivory/60 max-w-xl mx-auto mb-8 sm:mb-12 opacity-0 animate-fade-up"
+            className="font-body mx-auto mb-8 max-w-xl text-charcoal/60 sm:mb-12"
             style={{
               fontFamily: "General Sans, Helvetica Neue, sans-serif",
               fontWeight: 300,
               fontSize: "clamp(1.125rem, 2.4vw, 1.2rem)",
               lineHeight: 1.9,
               letterSpacing: "0.01em",
-              animationDelay: "0.42s",
-              animationFillMode: "forwards",
             }}
           >
             {description}
@@ -187,44 +190,20 @@ export function HeroSection({
 
         {children && (
           <div
-            className="opacity-0 animate-fade-up mt-16 sm:mt-24"
-            style={{ animationDelay: "0.55s", animationFillMode: "forwards" }}
+            className={
+              hasVisibleTitle ? "mt-16 sm:mt-24" : "mt-6 sm:mt-10"
+            }
           >
             {children}
           </div>
         )}
       </div>
 
-      {/* Bottom fade — blends into next section */}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-56 sm:h-64"
-        style={{
-          background:
-            baseColor === "black"
-              ? "linear-gradient(to top, #000 0%, rgba(0,0,0,0.9) 25%, rgba(0,0,0,0.4) 55%, transparent 100%)"
-              : "linear-gradient(to top, #1a1a1a 0%, rgba(26,26,26,0.85) 25%, rgba(15,15,15,0.4) 55%, transparent 100%)",
-        }}
-      />
-
       {bottomNote && (
-        <div
-          className="absolute z-10 left-4 sm:left-6 md:left-10 bottom-2 sm:bottom-3 md:bottom-4 max-w-[92%] sm:max-w-[80%]"
-          style={{
-            opacity: fadeOnScroll ? bgOpacity : 1,
-            willChange: fadeOnScroll ? "opacity" : undefined,
-          }}
-        >
+        <div className="absolute bottom-2 left-4 z-10 max-w-[92%] sm:bottom-3 sm:left-6 sm:max-w-[80%] md:bottom-4 md:left-10">
           {bottomNote}
         </div>
       )}
-
-      {/* Scroll indicator — refined line + small label */}
-      <div className="absolute bottom-8 sm:bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3">
-        <div
-          className="w-px h-14 bg-gradient-to-b from-gold/60 via-gold/30 to-transparent"
-          style={{ animation: "scroll-line 2.4s ease-in-out infinite" }}
-        />
-      </div>
     </section>
   );
 }

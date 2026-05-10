@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Footer } from "../components/Footer";
 import { HeroSection } from "../components/HeroSection";
+import { StickyHomeSearchDock } from "../components/StickyHomeSearchDock";
 import { useScrollAnimationAll } from "../hooks/useScrollAnimation";
 
 const brands = [
@@ -10,13 +11,12 @@ const brands = [
     to: "/nivaara",
     name: "Nivaãra",
     tagline: "by GHD",
-    stars: "★★★",
-    tier: "3★ Smart Comfort Hotels",
+    tier: "Smart Comfort Hotels",
     description:
       "At Nivaãra, rooms and suites are designed as personal sanctuaries — layered lighting, bespoke furnishings, calming palettes, and views that restore perspective. Whether overlooking skyline, water, or landscape, each space invites you to exhale.",
     ocidCard: "brand.nivaara.card",
     ocidBtn: "brand.nivaara.button",
-    accent: "#a89070",
+    accent: "#b8975a",
     image: "/assets/generated/hero-nivaara.dim_1920x1080.png",
   },
   // Swap Celéstra and Samrāya positioning and star tiers
@@ -25,8 +25,7 @@ const brands = [
     to: "/samraya",
     name: "Samrāya",
     tagline: "by GHD",
-    stars: "★★★★★",
-    tier: "5★ Luxury Hotels",
+    tier: "Luxury Hotels",
     description:
       "At Samraya, hospitality is not a service—it is a tradition. Guests are welcomed with the reverence once reserved for royalty, where privacy is respected, comfort is intuitive, and every experience feels personal. Whether it is a serene stay in our premium rooms, an indulgent culinary journey, or a celebration hosted in our grand banquets, Samraya transforms moments into lasting memories.",
     ocidCard: "brand.samraya.card",
@@ -39,13 +38,12 @@ const brands = [
     to: "/celestra",
     name: "Celéstra",
     tagline: "by GHD",
-    stars: "★★★★",
-    tier: "4★ Premium Hotels",
+    tier: "Premium Hotels",
     description:
       "Every Celéstra property is thoughtfully designed as a contemporary hospitality destination — blending modern architecture, intelligent amenities, and refined comfort to meet the needs of today's traveler. With well-appointed spaces for leisure, business, and social gatherings, Celéstra aims to become a preferred destination for vacations, meetings, and everyday stays — where comfort, convenience, and modern hospitality come together seamlessly.",
     ocidCard: "brand.celestra.card",
     ocidBtn: "brand.celestra.button",
-    accent: "#c9a84c",
+    accent: "#b8975a",
     image: "/assets/generated/hero-celestra.dim_1920x1080.png",
   },
 ];
@@ -62,8 +60,19 @@ export function HomePage() {
   useScrollAnimationAll();
 
   useEffect(() => {
-    document.title = "GHD Hotels – Crafted Experiences. Defined Excellence";
+    document.title = "GHD Hotels";
   }, []);
+
+  const [isMobileHero, setIsMobileHero] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 640px)");
+    const apply = () => setIsMobileHero(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+
+  const heroWrapRef = useRef<HTMLDivElement | null>(null);
 
   const philosophySectionRef = useRef<HTMLElement | null>(null);
   const brandsSectionRef = useRef<HTMLElement | null>(null);
@@ -118,13 +127,20 @@ export function HomePage() {
     };
   }, []);
 
-  const scrollTo = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
-  };
-
   // Our Hotel Brands — interactive carousel state
-  const [activeBrandIndex, setActiveBrandIndex] = useState(1); // index 1 is Samrāya (5★) after swap
+  const [activeBrandIndex, setActiveBrandIndex] = useState(1); // index 1 is Samrāya after swap
+  const [brandsCarouselPaused, setBrandsCarouselPaused] = useState(false);
+
+  const BRANDS_AUTO_ADVANCE_MS = 3500;
+
+  // Auto-advance carousel; pause while pointer is over or focus is inside the viewport
+  useEffect(() => {
+    if (brandsCarouselPaused) return;
+    const t = window.setTimeout(() => {
+      setActiveBrandIndex((prev) => (prev + 1) % brands.length);
+    }, BRANDS_AUTO_ADVANCE_MS);
+    return () => clearTimeout(t);
+  }, [activeBrandIndex, brandsCarouselPaused]);
 
   // Throttle wheel-based carousel navigation so it feels intentional
   const lastWheelTimeRef = useRef(0);
@@ -232,72 +248,30 @@ export function HomePage() {
   };
 
   return (
-    <div className="bg-charcoal min-h-screen home-test-font">
-      {/* ── Hero ─────────────────────────────────────────────── */}
-      <HeroSection
-        bgImage="/assets/generated/hero-home.dim_1920x1080.png"
-        title={
-          <>
-            Crafted Experiences.
-            <br />
-            Defined Excellence.
-          </>
-        }
-        overlay="medium"
-        titleClass="max-w-4xl mx-auto"
-        titleStyle={{
-          fontSize: "clamp(2.45rem, 5.8vw, 5.25rem)",
-          fontWeight: 100,
-          WebkitTextStroke: "1.3px rgba(0, 0, 0, 0.8)",
-          textShadow:
-            "0 0 20px rgba(0,0,0,0.75), 0 0 40px rgba(0,0,0,0.6), 0 0 70px rgba(0,0,0,0.85)",
-        }}
-        bottomNote={
-          <p
-            className="conceptual-disclaimer font-body text-left text-[0.58rem] sm:text-[0.64rem] md:text-[0.7rem]"
-            style={{
-              fontFamily:
-                '"Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif',
-              letterSpacing: "0.03em",
-              lineHeight: 1.35,
-            }}
-          >
-            Images are conceptual and may differ from final development.
-          </p>
-        }
-        fadeOnScroll
-      >
-        <div>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              type="button"
-              onClick={() => scrollTo("philosophy")}
-              className="btn-gold"
-              data-ocid="hero.philosophy.button"
-            >
-              <span>Explore Our Philosophy</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => scrollTo("brands")}
-              className="btn-gold-filled"
-              data-ocid="hero.brands.button"
-            >
-              Discover Our Brands
-            </button>
-          </div>
-        </div>
-      </HeroSection>
+    <div className="bg-cream min-h-screen home-test-font">
+      {/* ── Hero (video only; single search in bottom dock after scroll) ── */}
+      <div ref={heroWrapRef}>
+        <HeroSection
+          bgVideo={
+            isMobileHero
+              ? "/assets/generated/MainPage.mov"
+              : "/assets/generated/WhatsApp%20Video%202026-04-27%20at%2017.02.37.mp4"
+          }
+          screenReaderHeading="GHD Hotels"
+        />
+      </div>
+
+      <StickyHomeSearchDock boundaryRef={heroWrapRef} />
 
       {/* ── Philosophy ────────────────────────────────────────── */}
       <section
         id="philosophy"
         ref={philosophySectionRef}
-        className="snap-section section-pad bg-charcoal-mid min-h-screen flex flex-col justify-center pt-12 sm:pt-16 md:pt-20 lg:pt-24"
+        className="flex flex-col justify-start bg-cream-muted px-4 py-12 sm:px-6 sm:py-14 md:py-16 lg:px-10"
         style={{ marginTop: "-2px" }}
       >
         <div
-          className="max-w-4xl mx-auto text-center px-2 sm:px-0 mt-12"
+          className="mx-auto max-w-4xl px-2 text-center sm:px-0"
           style={{ opacity: philosophySectionFade, willChange: "opacity" }}
         >
           <p className="eyebrow eyebrow--gold-emphasis animate-on-scroll">
@@ -305,21 +279,21 @@ export function HomePage() {
           </p>
           <div className="gold-divider animate-on-scroll delay-100" />
           <h2
-            className="font-display text-ivory animate-on-scroll delay-200"
+            className="font-display text-charcoal animate-on-scroll delay-200"
             style={{
               fontFamily: "Instrument Serif, Georgia, serif",
               fontWeight: 400,
               fontSize: "clamp(2.5rem, 5vw, 5rem)",
               lineHeight: 1.08,
               letterSpacing: "0.03em",
-              marginBottom: "3rem",
+              marginBottom: "1.5rem",
             }}
           >
             To craft spaces where people feel valued, inspired, and at ease.
           </h2>
-          <div className="space-y-7 animate-on-scroll delay-300 text-center max-w-3xl mx-auto">
+          <div className="mx-auto max-w-3xl space-y-5 text-center animate-on-scroll delay-300">
             <p
-              className="font-body text-ivory/65 leading-loose"
+              className="font-body text-charcoal/65 leading-loose"
               style={{
                 fontFamily:
                   '"Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif',
@@ -329,11 +303,11 @@ export function HomePage() {
               }}
             >
               From the quiet comfort of <strong>Nivaãra</strong>, to the refined elegance of{" "}
-              <strong>Samrāya</strong>, to the iconic luxury of <strong>Celéstra</strong> — each brand reflects a
+              <strong>Celéstra</strong>, to the royal luxury of <strong>Samrāya</strong> — each brand reflects a
               different expression of the same philosophy.
             </p>
             <p
-              className="font-body text-ivory/65 leading-loose"
+              className="font-body text-charcoal/65 leading-loose"
               style={{
                 fontFamily:
                   '"Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif',
@@ -348,9 +322,9 @@ export function HomePage() {
             </p>
           </div>
 
-          <div className="mt-16 pt-12 border-t border-gold/10 animate-on-scroll delay-400">
+          <div className="mt-10 border-t border-gold/25 pt-8 animate-on-scroll delay-400">
             <p
-              className="font-display text-gold/80 italic"
+              className="font-display text-charcoal italic"
               style={{
                 fontFamily: "Instrument Serif, Georgia, serif",
                 fontSize: "clamp(1.2rem, 2.5vw, 1.75rem)",
@@ -368,10 +342,10 @@ export function HomePage() {
       <section
         id="brands"
         ref={brandsSectionRef}
-        className="section-pad bg-charcoal"
+        className="bg-cream px-4 pb-0 pt-8 sm:px-6 sm:pt-10 md:pt-12 lg:px-10"
       >
         <div
-          className="max-w-6xl mx-auto px-4 sm:px-0"
+          className="mx-auto max-w-6xl sm:px-0"
           style={{
             opacity: brandsSectionFade,
             pointerEvents: brandsSectionFade < 0.08 ? "none" : "auto",
@@ -382,7 +356,7 @@ export function HomePage() {
             <p className="eyebrow eyebrow--gold-emphasis">Our Portfolio</p>
             <div className="gold-divider mx-auto" />
             <h2
-              className="font-display text-ivory"
+              className="font-display text-charcoal"
               style={{
                 fontFamily: "Instrument Serif, Georgia, serif",
                 fontWeight: 400,
@@ -397,11 +371,20 @@ export function HomePage() {
 
           {/* Carousel viewport */}
           <div
-            className="relative mt-6 sm:mt-8 h-[500px] sm:h-[570px] md:h-[620px] flex items-center justify-center"
+            className="relative mt-6 sm:mt-8 h-[580px] sm:h-[640px] md:h-[720px] flex items-center justify-center"
             style={{ perspective: "1600px" }}
             onWheel={handleBrandWheel}
             onTouchStart={handleBrandTouchStart}
             onTouchEnd={handleBrandTouchEnd}
+            onMouseEnter={() => setBrandsCarouselPaused(true)}
+            onMouseLeave={() => setBrandsCarouselPaused(false)}
+            onFocusCapture={() => setBrandsCarouselPaused(true)}
+            onBlurCapture={(e) => {
+              const next = e.relatedTarget as Node | null;
+              if (!next || !e.currentTarget.contains(next)) {
+                setBrandsCarouselPaused(false);
+              }
+            }}
           >
             {brands.map((brand, i) => (
               <div
@@ -419,10 +402,10 @@ export function HomePage() {
                 style={getBrandPositionStyles(i)}
               >
                 <div
-                  className="glass-card group relative overflow-hidden flex flex-col w-[400px] sm:w-[460px] md:w-[520px] rounded-3xl"
+                  className="glass-card group relative overflow-hidden flex flex-col w-[400px] sm:w-[460px] md:w-[520px] h-[540px] sm:h-[600px] md:h-[680px] rounded-3xl"
                   data-ocid={brand.ocidCard}
                 >
-                  <div className="relative h-56 sm:h-64 md:h-80 overflow-hidden bg-charcoal">
+                  <div className="relative h-56 sm:h-64 md:h-80 flex-shrink-0 overflow-hidden bg-cream">
                     <img
                       src={brand.image}
                       alt={brand.name}
@@ -431,10 +414,10 @@ export function HomePage() {
                     />
                   </div>
 
-                  <div className="p-5 sm:p-6 md:p-7 pt-6 flex-1 flex flex-col text-justify min-w-0">
+                  <div className="p-5 sm:p-6 md:p-7 pt-6 flex-1 flex flex-col min-h-0 text-justify min-w-0">
                     <div className="flex items-baseline justify-between gap-3 mb-1.5">
                       <h3
-                        className="font-display text-ivory text-justify min-w-0 flex-1"
+                        className="font-display text-charcoal text-justify min-w-0 flex-1"
                         style={{
                           fontFamily: "Instrument Serif, Georgia, serif",
                           fontWeight: 400,
@@ -448,10 +431,10 @@ export function HomePage() {
                         className="star-rating flex-shrink-0"
                         style={{
                           textShadow:
-                            "0 0 10px rgba(201,168,76,0.8), 0 0 18px rgba(201,168,76,0.6)",
+                            "0 0 10px rgba(184,151,90,0.8), 0 0 18px rgba(184,151,90,0.6)",
                         }}
                       >
-                        {brand.stars}
+                      {/* star rating intentionally removed */}
                       </p>
                     </div>
                     <p
@@ -466,21 +449,21 @@ export function HomePage() {
                       {brand.tagline}
                     </p>
                     <p
-                      className="font-body text-ivory leading-loose mb-6 flex-1"
-                    style={{
-                      fontFamily:
-                        '"Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif',
-                      fontWeight: 300,
-                      fontSize: "0.95rem",
-                      lineHeight: 1.85,
-                    }}
+                      className="font-body text-charcoal leading-loose mb-4 flex-1 min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain pr-1"
+                      style={{
+                        fontFamily:
+                          '"Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif',
+                        fontWeight: 300,
+                        fontSize: "0.95rem",
+                        lineHeight: 1.85,
+                      }}
                     >
                       {brand.description}
                     </p>
 
                     <Link
                       to={brand.to}
-                      className="btn-gold mt-auto"
+                      className="btn-gold mt-auto flex-shrink-0"
                       style={{ fontSize: "0.7rem", letterSpacing: "0.2em" }}
                       data-ocid={brand.ocidBtn}
                       onClick={(e) => {
@@ -498,39 +481,28 @@ export function HomePage() {
               </div>
             ))}
           </div>
-          <p
-            className="conceptual-disclaimer font-body text-left text-[0.58rem] sm:text-[0.64rem] md:text-[0.7rem] mt-12"
-            style={{
-              fontFamily:
-                '"Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif',
-              letterSpacing: "0.03em",
-              lineHeight: 1.35,
-            }}
-          >
-            Images are conceptual and may differ from final development.
-          </p>
         </div>
       </section>
 
-      {/* ── Vision Section ─────────────────────────────────────── */}
+      {/* ── Future — vista only here; fixed attachment = window while this block is on screen ── */}
       <section
         ref={visionSectionRef}
-        className="snap-section section-pad parallax-section parallax-fixed relative min-h-screen flex flex-col justify-center"
+        className="parallax-section parallax-fixed relative isolate flex flex-col justify-start overflow-hidden bg-cream-deep px-4 pt-10 pb-8 sm:px-6 sm:pt-12 sm:pb-10 md:pt-14 lg:px-10 lg:pt-16"
         style={{
           backgroundImage:
             "url(/assets/generated/hero-future.dim_1920x1080.png)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       >
-        {/* No vignette overlay (intentionally removed site-wide) */}
+        {/* Translucent screen over the photo — no blur */}
         <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(to bottom, rgba(15,15,15,0.6) 0%, rgba(15,15,15,0.45) 50%, rgba(15,15,15,0.75) 100%)",
-          }}
+          className="pointer-events-none absolute inset-0 z-0 bg-stone-950/45"
+          aria-hidden
         />
         <div
-          className="relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-0"
+          className="home-future-section relative z-10 mx-auto max-w-4xl px-4 text-center sm:px-0"
           style={{ opacity: visionSectionFade, willChange: "opacity" }}
         >
           <p className="eyebrow eyebrow--gold-emphasis animate-on-scroll">
@@ -538,31 +510,30 @@ export function HomePage() {
           </p>
           <div className="gold-divider animate-on-scroll delay-100" />
           <h2
-            className="font-display text-ivory animate-on-scroll delay-200"
+            className="font-display animate-on-scroll delay-200"
             style={{
               fontFamily: "Instrument Serif, Georgia, serif",
               fontWeight: 400,
               fontSize: "clamp(2.5rem, 5vw, 5rem)",
               lineHeight: 1.08,
               letterSpacing: "0.03em",
-              marginBottom: "2.5rem",
-              // Match hero title (“Crafted Experiences…”): stroke + glow
-              WebkitTextStroke: "1.3px rgba(0, 0, 0, 0.8)",
-              textShadow:
-                "0 0 20px rgba(0,0,0,0.75), 0 0 40px rgba(0,0,0,0.6), 0 0 70px rgba(0,0,0,0.85)",
+              marginBottom: "1.5rem",
+              color: "#fafaf9",
+              WebkitTextStroke: "0.35px rgba(255, 255, 255, 0.2)",
             }}
           >
             Building the Future of Hospitality
           </h2>
           <div className="space-y-6 animate-on-scroll delay-300">
             <p
-              className="font-body text-ivory/65 leading-loose"
+              className="font-body leading-loose"
               style={{
                 fontFamily:
                   '"Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif',
                 fontWeight: 400,
                 fontSize: "1.3rem",
                 lineHeight: 1.9,
+                color: "rgba(250, 250, 249, 0.92)",
               }}
             >
               GHD Hotels is developing a new generation of hotels that combine
@@ -571,9 +542,15 @@ export function HomePage() {
               carefully selected destinations.
             </p>
           </div>
-          <div className="mt-14 animate-on-scroll delay-400">
-            <Link to="/vision" className="btn-gold">
-              <span>Discover Our Vision</span>
+          <div className="mt-8 animate-on-scroll delay-400">
+            <Link
+              to="/vision"
+              className="inline-flex min-h-[44px] items-center justify-center border border-white/85 bg-transparent px-8 py-3 text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-white transition-colors duration-300 hover:bg-white/15"
+              style={{
+                fontFamily: "General Sans, Helvetica Neue, sans-serif",
+              }}
+            >
+              Discover Our Vision
             </Link>
           </div>
         </div>

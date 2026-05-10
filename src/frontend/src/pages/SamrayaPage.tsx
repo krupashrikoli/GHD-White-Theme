@@ -11,6 +11,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { Footer } from "../components/Footer";
 import { HeroSection } from "../components/HeroSection";
+import { StickyHomeSearchDock } from "../components/StickyHomeSearchDock";
 import { useScrollAnimationAll } from "../hooks/useScrollAnimation";
 
 const features = [
@@ -50,23 +51,9 @@ const features = [
     description:
       "Bespoke celebrations set in architectural masterpieces — unforgettable by design.",
   },
-  
 ];
 
-const SAMRAYA_PHILOSOPHY = {
-  darkOverlayOpacity: 0.42,
-};
-
-// ── Samrāya philosophy: royallady only (scroll parallax). green.png is layout-only (no JS motion).
-const SAMRAYA_PHILOSOPHY_PARALLAX = {
-  royal: {
-    multiplier: 0.13,
-    clampMin: -160,
-    clampMax: 160,
-  },
-};
-
-// Smooth opacity fade for decorative layers (royallady + green) when entering/leaving Philosophy.
+// Smooth opacity fade for philosophy text over fixed royal-lady background.
 // Values are in "vh" terms and applied against the section's rect.top / rect.bottom.
 const SAMRAYA_PHILOSOPHY_FADE = {
   // Fade in as section top moves from here -> here.
@@ -77,23 +64,14 @@ const SAMRAYA_PHILOSOPHY_FADE = {
   fadeOutEndVh: 0.1,
 };
 
-/** How far green.png sits below the philosophy section’s bottom edge (into Offerings). */
-const SAMRAYA_GREEN_OVERFLOW = "clamp(4.5rem, 4vw, 10rem)";
-
-/** Full-bleed width (viewport). Slightly over 100vw if you want no hairline gaps. */
-const SAMRAYA_GREEN_WIDTH = "104vw";
-
-/** Added to margin-left calc (after viewport centering): negative = nudge left, positive = right. */
-const SAMRAYA_GREEN_SHIFT_X = "-25px";
-
 export function SamrayaPage() {
   useScrollAnimationAll();
+  const heroWrapRef = useRef<HTMLDivElement | null>(null);
   const philosophyRef = useRef<HTMLElement | null>(null);
-  const [royalParallax, setRoyalParallax] = useState(0);
   const [philosophyFade, setPhilosophyFade] = useState(0);
 
   useEffect(() => {
-    document.title = "Samrāya by GHD – Flagship Luxury | 5★ Hotels";
+    document.title = "Samrāya by GHD – Flagship Luxury";
   }, []);
 
   useEffect(() => {
@@ -102,17 +80,10 @@ export function SamrayaPage() {
       if (!el) return;
       const rect = el.getBoundingClientRect();
       const vh = window.innerHeight;
-      const center = vh * 0.5;
       const clamp = (v: number, min: number, max: number) =>
         Math.max(min, Math.min(max, v));
-      const base = center - rect.top;
 
-      const p = SAMRAYA_PHILOSOPHY_PARALLAX;
-      setRoyalParallax(
-        clamp(base * p.royal.multiplier, p.royal.clampMin, p.royal.clampMax),
-      );
-
-      // Smooth enter/exit fade using rect.top/rect.bottom (no transform/position animation).
+      // Smooth enter/exit fade using rect.top/rect.bottom.
       const smoothstep01 = (t: number) => t * t * (3 - 2 * t);
       const fadeInStartPx = vh * SAMRAYA_PHILOSOPHY_FADE.fadeInStartVh;
       const fadeInEndPx = vh * SAMRAYA_PHILOSOPHY_FADE.fadeInEndVh;
@@ -142,42 +113,57 @@ export function SamrayaPage() {
   }, []);
 
   return (
-    <div className="bg-black min-h-screen overflow-x-clip">
-      <HeroSection
-        bgImage="/assets/generated/hero-samraya.dim_1920x1080.png"
-        title="Samrāya — A Realm of Refined Grandeur"
-        overlay="dark"
-        baseColor="black"
-        bottomNote={
-          <p
-            className="conceptual-disclaimer font-body text-left text-[0.58rem] sm:text-[0.64rem] md:text-[0.7rem]"
+    <div className="bg-cream-deep min-h-screen overflow-x-clip">
+      <div ref={heroWrapRef}>
+        <HeroSection
+          bgImage="/assets/generated/hero-samraya.dim_1920x1080.png"
+          screenReaderHeading="Samrāya"
+          baseColor="black"
+        />
+      </div>
+      <StickyHomeSearchDock boundaryRef={heroWrapRef} />
+
+      <section
+        aria-labelledby="samraya-page-title"
+        className="border-b border-stone-200/70 bg-cream px-4 py-8 sm:px-6 sm:py-10 md:py-12 lg:px-10"
+      >
+        <div className="mx-auto max-w-4xl text-center">
+          <h1
+            id="samraya-page-title"
+            className="font-display text-black"
             style={{
-              fontFamily:
-                '"Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif',
+              fontFamily: "Instrument Serif, Georgia, serif",
+              fontWeight: 500,
+              fontSize: "clamp(2.25rem, 5vw, 4rem)",
               letterSpacing: "0.03em",
-              lineHeight: 1.35,
+              lineHeight: 1.08,
             }}
           >
-            Images are conceptual and may differ from final development.
+            — Samrāya —
+          </h1>
+          <p
+            className="mx-auto mt-6 max-w-2xl text-black sm:mt-8"
+            style={{
+              fontFamily:
+                '"Zapfino", "Snell Roundhand", "Apple Chancery", "Segoe Script", "Brush Script MT", cursive',
+              fontSize: "clamp(1.05rem, 2.2vw, 1.85rem)",
+              fontWeight: 400,
+              letterSpacing: "0.02em",
+              lineHeight: 1.45,
+            }}
+          >
+            A Realm of Refined Grandeur
           </p>
-        }
-        fadeOnScroll
-        titleStyle={{
-          WebkitTextStroke: "1.3px rgba(0, 0, 0, 0.8)",
-          textShadow:
-            "0 0 20px rgba(0,0,0,0.75), 0 0 40px rgba(0,0,0,0.6), 0 0 70px rgba(0,0,0,0.85)",
-        }}
-      />
+        </div>
+      </section>
 
       {/* Brand Introduction */}
-      <section className="section-pad relative z-0 bg-black pt-12 sm:pt-16 md:pt-20 lg:pt-24">
+      <section className="section-pad-compact relative z-0 bg-cream-deep">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-0">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 lg:gap-16 items-center">
             <div className="lg:col-span-7 text-justify">
-              <p className="star-rating star-rating--brand mb-2">★★★★★</p>
               <p
                 className="eyebrow eyebrow--gold-emphasis animate-on-scroll"
-                style={{ color: "#b8975a" }}
               >
                 The Flagship Brand
               </p>
@@ -195,7 +181,7 @@ export function SamrayaPage() {
                 A Quieter Power, Rooted in Heritage
               </h2>
               <div className="space-y-5 animate-on-scroll delay-300">
-                <p className="body-refined-lg text-ivory-muted/70">
+                <p className="body-refined-lg text-charcoal/70">
                   Luxury is not only about grandeur—it is about creating
                   experiences that carry meaning, heritage, and timeless
                   elegance. The name <strong>Samrāya</strong> is inspired by the
@@ -205,16 +191,16 @@ export function SamrayaPage() {
                   where guests are welcomed with the warmth and reverence
                   traditionally reserved for royalty.
                 </p>
-                <p className="body-refined-lg text-ivory-muted/70">
+                <p className="body-refined-lg text-charcoal/70">
                   As the flagship five-star brand of GHD Hotels, Samrāya is
                   conceived as a luxury hospitality experience rooted in Indian
                   heritage. Drawing from the architectural elegance, cultural
                   richness, and royal traditions of historic Indian palaces, the
                   brand reinterprets these influences through contemporary
-                  design and modern hospitality standards. 
+                  design and modern hospitality standards.
                 </p>
                 <p
-                  className="font-display text-ivory/90 italic"
+                  className="font-display text-charcoal/90 italic"
                   style={{
                     fontFamily: "Instrument Serif, Georgia, serif",
                     fontWeight: 400,
@@ -236,7 +222,6 @@ export function SamrayaPage() {
               >
                 <p
                   className="eyebrow eyebrow--gold-emphasis mb-4 text-justify"
-                  style={{ color: "#b8975a" }}
                 >
                   The Samrāya Promise
                 </p>
@@ -256,8 +241,8 @@ export function SamrayaPage() {
                           className="w-5 h-px flex-shrink-0 mt-[0.65em]"
                           style={{ background: "#b8975a" }}
                         />
-                        <span className="font-body text-base text-ivory-muted/70 min-w-0 flex-1 text-justify">
-                          <strong className="text-ivory/90 font-semibold">
+                        <span className="font-body text-base text-charcoal/70 min-w-0 flex-1 text-justify">
+                          <strong className="text-charcoal/90 font-semibold">
                             {bold}
                           </strong>
                           {restText ? ` — ${restText}` : ""}
@@ -272,122 +257,64 @@ export function SamrayaPage() {
         </div>
       </section>
 
-      {/* Philosophy + Offerings: green.png overflows visually into Offerings (no overflow clip on section). */}
+      {/* The Philosophy of Samrāya — fixed royal lady photo + scrim; light text (Nivaãra Buddha pattern) */}
       <section
         ref={philosophyRef}
-        className="section-pad relative z-10 overflow-x-clip overflow-y-visible bg-black"
-        style={{ backgroundColor: "#000" }}
+        className="samraya-philosophy-section relative isolate z-10 flex w-full flex-col items-center justify-center bg-cream-deep px-4 py-16 sm:px-6 sm:py-20 md:py-24 lg:px-10"
       >
-        {/* Clip royallady + overlay only — green is a sibling so it can extend past section bottom */}
-        <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-          <img
-            src="/assets/generated/royallady.png"
-            alt=""
-            aria-hidden
-            className="absolute inset-0 h-full w-full object-cover object-center select-none"
-            style={{
-              filter: "brightness(0.88) contrast(1.05) saturate(1.02)",
-              transform: `translate3d(0, ${royalParallax}px, 0)`,
-              opacity: philosophyFade,
-              willChange: "transform, opacity",
-            }}
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background: `rgba(18, 16, 14, ${SAMRAYA_PHILOSOPHY.darkOverlayOpacity})`,
-              opacity: philosophyFade,
-            }}
-            aria-hidden
-          />
-        </div>
-
-        {/* green.png: full viewport width, centered (calc breaks out of section-pad); bottom into Offerings */}
         <div
-          className="pointer-events-none absolute left-0 z-[15] max-w-none"
-          style={{
-            width: SAMRAYA_GREEN_WIDTH,
-            // Centers a 100vw-wide layer on the viewport from inside padded section
-            marginLeft: `calc(50% - 50vw + ${SAMRAYA_GREEN_SHIFT_X})`,
-            bottom: `calc(-1 * ${SAMRAYA_GREEN_OVERFLOW})`,
-            opacity: philosophyFade,
-          }}
+          className="home-future-section relative z-10 mx-auto w-full max-w-4xl px-4 text-center sm:px-0"
+          style={{ opacity: philosophyFade, willChange: "opacity" }}
         >
-          <img
-            src="/assets/generated/green.png"
-            alt=""
-            aria-hidden
-            className="mx-auto block h-auto w-full max-w-full object-contain object-center select-none"
+          <p className="eyebrow eyebrow--gold-emphasis animate-on-scroll">
+            The Philosophy of Samrāya
+          </p>
+          <div
+            className="gold-divider mx-auto animate-on-scroll delay-100"
+            style={{
+              background:
+                "linear-gradient(90deg, transparent, #b8975a, transparent)",
+            }}
           />
-        </div>
-
-        <div className="relative z-[30] max-w-4xl mx-auto px-4 sm:px-0 lg:px-8 lg:max-w-[54vw] lg:ml-0 lg:mr-auto">
-          <div className="text-center mb-12 sm:mb-16">
-            <p
-              className="eyebrow eyebrow--gold-emphasis animate-on-scroll"
-              style={{ color: "#b8975a" }}
-            >
-              The Philosophy of Samrāya
+          <h2
+            className="section-heading animate-on-scroll delay-200"
+            style={{
+              marginBottom: "1.5rem",
+              WebkitTextStroke: "0.35px rgba(255, 255, 255, 0.2)",
+            }}
+          >
+            Luxury with Purpose
+          </h2>
+          <div className="mx-auto max-w-3xl space-y-6 animate-on-scroll delay-300 text-center">
+            <p className="body-refined-lg" style={{ fontWeight: 700 }}>
+              At Samrāya, luxury is shaped by purpose, precision, and thoughtful
+              hospitality.
             </p>
-            <div
-              className="gold-divider animate-on-scroll delay-100"
-              style={{
-                background:
-                  "linear-gradient(90deg, transparent, #b8975a, transparent)",
-              }}
-            />
-            <h2 className="section-heading animate-on-scroll delay-200">
-              Luxury with Purpose
-            </h2>
-          </div>
-
-          <div className="space-y-6 animate-on-scroll delay-300 text-center max-w-3xl mx-auto">
-            <p
-              className="body-refined-lg font-bold drop-shadow-[0_2px_12px_rgba(0,0,0,0.75)]"
-              style={{ color: "rgba(245,240,232,0.92)", fontWeight: 700 }}
-            >
-              At Samrāya, luxury is shaped by purpose, precision, and
-              thoughtful hospitality.
+            <p className="body-refined-lg" style={{ fontWeight: 700 }}>
+              Rooted in the timeless Indian principle of{" "}
+              <em>Atithi Devo Bhava</em>— the guest is divine — Samrāya
+              interprets India’s heritage through a contemporary lens, creating
+              spaces where grandeur, dignity, and thoughtful service coexist in
+              perfect harmony. As the flagship five-star brand of GHD Hotels,
+              Samrāya is designed to deliver world-class luxury experiences
+              while preserving the warmth and cultural depth of Indian
+              hospitality.
             </p>
-            <p
-              className="body-refined-lg font-bold drop-shadow-[0_2px_12px_rgba(0,0,0,0.75)]"
-              style={{ fontWeight: 700 }}
-            >
-              Rooted in the timeless Indian principle of <em>Atithi Devo Bhava</em>
-              — the guest is divine — Samrāya interprets India’s heritage
-              through a contemporary lens, creating spaces where grandeur,
-              dignity, and thoughtful service coexist in perfect harmony. As the
-              flagship five-star brand of GHD Hotels, Samrāya is designed to
-              deliver world-class luxury experiences while preserving the warmth
-              and cultural depth of Indian hospitality.
-            </p>
-            <p
-              className="body-refined-lg font-bold drop-shadow-[0_2px_12px_rgba(0,0,0,0.75)]"
-              style={{ fontWeight: 700 }}
-            >
-              Samrāya represents refined grandeur — not opulence for display,
-              but excellence expressed through architecture, service, and
+            <p className="body-refined-lg" style={{ fontWeight: 700 }}>
+              Samrāya represents refined grandeur — not opulence for display, but
+              excellence expressed through architecture, service, and
               meticulous attention to detail.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Offerings: transparent top band so philosophy green can show through; charcoal begins below overlap */}
-      <section className="section-pad relative z-10 overflow-visible bg-transparent">
-        <div
-          className="pointer-events-none absolute inset-x-0 bg-black z-0"
-          style={{
-            top: SAMRAYA_GREEN_OVERFLOW,
-            bottom: 0,
-          }}
-          aria-hidden
-        />
-        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-0">
+      {/* Samrāya Offerings */}
+      <section className="section-pad-compact relative z-10 bg-cream-deep">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-0">
           <div className="text-center mb-8 sm:mb-12 lg:mb-16">
             <p
               className="eyebrow eyebrow--gold-emphasis animate-on-scroll"
-              style={{ color: "#b8975a" }}
             >
               Samrāya Offerings
             </p>
@@ -420,7 +347,7 @@ export function SamrayaPage() {
                   </div>
                   <div>
                     <h3
-                      className="font-display text-ivory text-base mb-2"
+                      className="font-display text-charcoal text-base mb-2"
                       style={{
                         fontFamily: "Instrument Serif, Georgia, serif",
                         fontWeight: 400,
@@ -429,7 +356,7 @@ export function SamrayaPage() {
                       {feature.label}
                     </h3>
                     <p
-                      className="font-body text-base text-ivory-muted/70 leading-relaxed"
+                      className="font-body text-base text-charcoal/70 leading-relaxed"
                       style={{
                         fontWeight: 300,
                       }}
@@ -445,7 +372,7 @@ export function SamrayaPage() {
       </section>
 
       {/* Under Development Banner */}
-      <section className="py-10 sm:py-14 lg:py-16 bg-black">
+      <section className="py-10 sm:py-14 lg:py-16 bg-cream-deep">
         <div className="max-w-3xl mx-auto text-center px-4 sm:px-6">
           <div
             className="p-6 sm:p-8 lg:p-12 animate-on-scroll"
@@ -469,7 +396,7 @@ export function SamrayaPage() {
               Coming Soon
             </h3>
             <p
-              className="font-body text-ivory-muted/65 text-sm sm:text-base leading-relaxed mb-6 sm:mb-8"
+              className="font-body text-charcoal/65 text-sm sm:text-base leading-relaxed mb-6 sm:mb-8"
               style={{
                 fontWeight: 300,
               }}
@@ -489,7 +416,7 @@ export function SamrayaPage() {
       </section>
 
       {/* Cross Navigation */}
-      <section className="py-10 sm:py-14 lg:py-16 bg-black border-t border-gold/10">
+      <section className="border-t border-gold/10 bg-white py-10 sm:py-14 lg:py-16">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6">
           <p className="eyebrow mb-6 sm:mb-8 animate-on-scroll">
             Explore Our Portfolio

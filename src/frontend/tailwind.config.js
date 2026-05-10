@@ -28,13 +28,21 @@ export default {
           dim: '#a08332',
         },
         charcoal: {
-          DEFAULT: '#0f0f0f',
-          mid: '#1a1a1a',
-          light: '#2a2a2a',
+          /** Warm ink — primary text on cream / white */
+          DEFAULT: '#252019',
+          mid: '#3d352e',
+          light: '#564d45',
         },
         ivory: {
           DEFAULT: '#f5f0e8',
           muted: '#d4cfc6',
+        },
+        /** Page backgrounds — white / warm beige */
+        cream: {
+          DEFAULT: '#fcfaf7',
+          muted: '#f4efe6',
+          deep: '#e9e2d5',
+          card: '#f7f3ec',
         },
         border: "oklch(var(--border))",
         input: "oklch(var(--input))",

@@ -3,6 +3,7 @@ import { Building2, Leaf, TrendingUp, Users } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Footer } from "../components/Footer";
 import { HeroSection } from "../components/HeroSection";
+import { StickyHomeSearchDock } from "../components/StickyHomeSearchDock";
 import { useScrollAnimationAll } from "../hooks/useScrollAnimation";
 
 const pillars = [
@@ -12,7 +13,7 @@ const pillars = [
     title: "Carefully Designed Hotel Architecture",
     description:
       "Every GHD property begins with a vision — not just of a building, but of an experience. Our architectural approach engages the finest design studios to create hotels that are as much cultural landmarks as they are places to stay. Each property responds to its geography, climate, and context, resulting in structures that belong to their location while transcending it.",
-    accentColor: "#c9a84c",
+    accentColor: "#b8975a",
   },
   {
     number: "II",
@@ -36,7 +37,7 @@ const pillars = [
     title: "Long Term Hospitality Vision",
     description:
       "GHD Hotels is building a hospitality portfolio with generational ambition. We are not developing hotels for quick returns but for lasting legacies. Our properties are designed to be iconic, enduring, and continually evolving. The GHD brand is being built to stand among the world's most respected hospitality names — a vision we pursue with patience and conviction.",
-    accentColor: "#c9a84c",
+    accentColor: "#b8975a",
   },
 ];
 
@@ -49,6 +50,7 @@ const VISION_SECTION_FADE = {
 
 export function VisionPage() {
   useScrollAnimationAll();
+  const heroWrapRef = useRef<HTMLDivElement | null>(null);
   const introRef = useRef<HTMLElement | null>(null);
   const pillarsRef = useRef<HTMLElement | null>(null);
   const statusRef = useRef<HTMLElement | null>(null);
@@ -104,22 +106,38 @@ export function VisionPage() {
   }, []);
 
   return (
-    <div className="bg-charcoal min-h-screen nivaara-test-font">
-      <HeroSection
-        bgImage="/assets/generated/hero-vision.dim_1920x1080.png"
-        title="Building the Future of Hospitality"
-        overlay="dark"
-        bgBlurPx={1}
-        bgBrightness={0.65}
-        titleStyle={{
-          WebkitTextStroke: "1.3px rgba(0, 0, 0, 0.8)",
-          textShadow:
-            "0 0 20px rgba(0,0,0,0.75), 0 0 40px rgba(0,0,0,0.6), 0 0 70px rgba(0,0,0,0.85)",
-        }}
-      />
+    <div className="bg-cream min-h-screen nivaara-test-font">
+      <div ref={heroWrapRef}>
+        <HeroSection
+          bgImage="/assets/generated/hero-vision.dim_1920x1080.png"
+          screenReaderHeading="Development Vision"
+        />
+      </div>
+      <StickyHomeSearchDock boundaryRef={heroWrapRef} />
+
+      <section
+        aria-labelledby="vision-page-title"
+        className="border-b border-stone-200/70 bg-cream px-4 py-8 sm:px-6 sm:py-10 md:py-12 lg:px-10"
+      >
+        <div className="mx-auto max-w-4xl text-center">
+          <h1
+            id="vision-page-title"
+            className="font-display text-black"
+            style={{
+              fontFamily: "Instrument Serif, Georgia, serif",
+              fontWeight: 500,
+              fontSize: "clamp(2.25rem, 5vw, 4rem)",
+              letterSpacing: "0.03em",
+              lineHeight: 1.08,
+            }}
+          >
+            Building the Future of Hospitality
+          </h1>
+        </div>
+      </section>
 
       {/* Intro Section */}
-      <section ref={introRef} className="section-pad bg-charcoal-mid">
+      <section ref={introRef} className="section-pad-compact bg-cream-muted">
         <div
           className="max-w-4xl mx-auto text-center px-4 sm:px-0"
           style={{ opacity: introFade, willChange: "opacity" }}
@@ -152,7 +170,7 @@ export function VisionPage() {
       </section>
 
       {/* Four Pillars */}
-      <section ref={pillarsRef} className="section-pad bg-charcoal">
+      <section ref={pillarsRef} className="section-pad-compact bg-cream">
         <div
           className="max-w-6xl mx-auto px-4 sm:px-0"
           style={{ opacity: pillarsFade, willChange: "opacity" }}
@@ -167,6 +185,7 @@ export function VisionPage() {
             </h2>
           </div>
 
+          {/* Cards grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
             {pillars.map((pillar, i) => {
               const Icon = pillar.icon;
@@ -179,7 +198,6 @@ export function VisionPage() {
                     borderColor: `${pillar.accentColor}20`,
                   }}
                 >
-                  {/* Number + Icon Row */}
                   <div className="flex items-start gap-4 sm:gap-6 mb-4 sm:mb-6">
                     <span
                       className="pillar-number font-display text-5xl leading-none flex-shrink-0"
@@ -197,7 +215,7 @@ export function VisionPage() {
 
                   <div className="min-w-0 text-justify">
                     <h3
-                      className="font-display text-ivory text-xl md:text-2xl mb-4"
+                      className="font-display text-charcoal text-xl md:text-2xl mb-4"
                       style={{
                         fontFamily: "Instrument Serif, Georgia, serif",
                         fontWeight: 400,
@@ -206,7 +224,7 @@ export function VisionPage() {
                       {pillar.title}
                     </h3>
                     <p
-                      className="font-body text-base text-ivory-muted/65 leading-relaxed"
+                      className="font-body text-base text-charcoal/65 leading-relaxed"
                       style={{
                         fontFamily: "General Sans, Helvetica Neue, sans-serif",
                         fontWeight: 300,
@@ -226,37 +244,28 @@ export function VisionPage() {
       <section
         id="development-status"
         ref={statusRef}
-        className="section-pad parallax-section relative"
-        style={{
-          backgroundImage:
-            "url(/assets/generated/hero-vision.dim_1920x1080.png)",
-        }}
+        className="section-pad-compact parallax-section relative overflow-hidden"
       >
-        {/* No vignette overlay (intentionally removed site-wide) */}
         <div
-          className="absolute inset-0"
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
           style={{
-            background:
-              "linear-gradient(to bottom, rgba(15,15,15,0.7) 0%, rgba(15,15,15,0.55) 50%, rgba(15,15,15,0.8) 100%)",
+            backgroundImage:
+              "url(/assets/generated/hero-vision.dim_1920x1080.png)",
+            filter: "blur(4px)",
+            transform: "scale(1.06)",
           }}
         />
         <div
-          className="relative z-10 max-w-4xl mx-auto px-4 sm:px-0"
+          className="home-future-section relative z-10 mx-auto max-w-4xl px-4 sm:px-0"
           style={{ opacity: statusFade, willChange: "opacity" }}
         >
-          <div className="text-center mb-12 sm:mb-20">
+          <div className="vision-status-headlines mb-12 text-center sm:mb-20">
             <p className="eyebrow eyebrow--gold-emphasis animate-on-scroll">
               Development Status
             </p>
             <div className="gold-divider animate-on-scroll delay-100" />
-            <h2
-              className="section-heading animate-on-scroll delay-200"
-              style={{
-                WebkitTextStroke: "1.3px rgba(0, 0, 0, 0.8)",
-                textShadow:
-                  "0 0 20px rgba(0,0,0,0.75), 0 0 40px rgba(0,0,0,0.6), 0 0 70px rgba(0,0,0,0.85)",
-              }}
-            >
+            <h2 className="section-heading animate-on-scroll delay-200">
               The Journey Ahead
             </h2>
           </div>
@@ -294,28 +303,18 @@ export function VisionPage() {
             ].map((item, i) => (
               <div
                 key={item.phase}
-                className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start border border-gold/10 p-4 sm:p-6 animate-on-scroll"
+                className="flex flex-col items-start gap-4 border border-white/20 p-4 sm:flex-row sm:gap-6 sm:p-6 animate-on-scroll"
                 style={{
                   background: "rgba(26, 26, 26, 0.5)",
                   transitionDelay: `${0.1 + i * 0.12}s`,
                 }}
               >
-                <div className="flex-shrink-0 text-center w-24">
-                  <p className="eyebrow">{item.phase}</p>
+                <div className="w-24 flex-shrink-0 text-center">
+                  <p className="eyebrow text-[#fafaf9]">{item.phase}</p>
                   <p
-                    className="font-body mt-2 px-2 py-1 border border-gold/20 text-center text-sm"
+                    className="font-body mt-2 border border-white/25 px-2 py-1 text-center text-sm text-[#fafaf9]"
                     style={{
                       fontFamily: "General Sans, Helvetica Neue, sans-serif",
-                      color:
-                        item.status === "In Progress"
-                          ? "#c9a84c"
-                          : item.status === "Coming Soon"
-                            ? "#a89070"
-                            : "rgba(212,207,198,0.4)",
-                      borderColor:
-                        item.status === "In Progress"
-                          ? "rgba(201, 168, 76, 0.3)"
-                          : "rgba(201, 168, 76, 0.1)",
                       letterSpacing: "0.1em",
                     }}
                   >
@@ -324,7 +323,7 @@ export function VisionPage() {
                 </div>
                 <div>
                   <h4
-                    className="font-display text-ivory text-lg mb-2"
+                    className="font-display mb-2 text-lg text-[#fafaf9]"
                     style={{
                       fontFamily: "Instrument Serif, Georgia, serif",
                       fontWeight: 400,
@@ -333,7 +332,7 @@ export function VisionPage() {
                     {item.title}
                   </h4>
                   <p
-                    className="font-body text-base text-ivory-muted/60"
+                    className="font-body text-base text-[rgba(250,250,249,0.92)]"
                     style={{
                       fontFamily: "General Sans, Helvetica Neue, sans-serif",
                       fontWeight: 300,
@@ -351,7 +350,7 @@ export function VisionPage() {
       {/* CTA */}
       <section
         ref={ctaRef}
-        className="py-12 sm:py-20 bg-charcoal-mid border-t border-gold/10"
+        className="py-12 sm:py-20 bg-cream-muted border-t border-gold/10"
       >
         <div
           className="max-w-3xl mx-auto text-center px-4 sm:px-6"
@@ -359,7 +358,7 @@ export function VisionPage() {
         >
           <div className="gold-divider animate-on-scroll" />
           <h3
-            className="font-display text-ivory text-3xl mt-8 mb-4 animate-on-scroll delay-200"
+            className="font-display text-charcoal text-3xl mt-8 mb-4 animate-on-scroll delay-200"
             style={{
               fontFamily: "Instrument Serif, Georgia, serif",
               fontWeight: 400,
@@ -368,7 +367,7 @@ export function VisionPage() {
             Join the GHD Journey
           </h3>
           <p
-            className="font-body text-ivory-muted/65 text-base leading-relaxed mb-10 animate-on-scroll delay-300"
+            className="font-body text-charcoal/65 text-base leading-relaxed mb-10 animate-on-scroll delay-300"
             style={{
               fontFamily: "General Sans, Helvetica Neue, sans-serif",
               fontWeight: 300,

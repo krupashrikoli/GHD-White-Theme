@@ -2,52 +2,82 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Booking checkout: native <dialog> reset + dimmed backdrop */
+.booking-checkout-dialog {
+  margin: auto;
+  padding: 0;
+}
+.booking-checkout-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Hide scrollbar but keep scroll */
+.scrollbar-invisible {
+  -ms-overflow-style: none; /* IE/Edge legacy */
+  scrollbar-width: none; /* Firefox */
+}
+.scrollbar-invisible::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
 @layer base {
   :root {
     --radius: 0.25rem;
-    /* GHD Hotels Luxury Dark Theme */
-    --background: 0.118 0 0;
-    --foreground: 0.95 0.015 85;
-    --card: 0.145 0 0;
-    --card-foreground: 0.92 0.012 80;
-    --popover: 0.18 0 0;
-    --popover-foreground: 0.95 0.015 85;
-    --primary: 0.72 0.09 85;
-    --primary-foreground: 0.1 0 0;
-    --secondary: 0.22 0 0;
-    --secondary-foreground: 0.85 0.01 80;
-    --muted: 0.2 0 0;
-    --muted-foreground: 0.55 0.008 70;
-    --accent: 0.72 0.09 85;
-    --accent-foreground: 0.1 0 0;
+    /* GHD Hotels — warm white & beige, charcoal text */
+    --background: 0.985 0.006 85;
+    --foreground: 0.19 0.022 55;
+    --card: 0.97 0.012 82;
+    --card-foreground: 0.19 0.022 55;
+    --popover: 0.99 0.005 85;
+    --popover-foreground: 0.19 0.022 55;
+    --primary: 0.62 0.09 78;
+    --primary-foreground: 0.99 0.005 85;
+    --secondary: 0.94 0.014 82;
+    --secondary-foreground: 0.22 0.022 55;
+    --muted: 0.93 0.016 82;
+    --muted-foreground: 0.44 0.024 58;
+    --accent: 0.62 0.09 78;
+    --accent-foreground: 0.99 0.005 85;
     --destructive: 0.577 0.245 27.325;
     --destructive-foreground: 0.985 0 0;
-    --border: 0.28 0.008 70;
-    --input: 0.25 0.006 70;
-    --ring: 0.72 0.09 85;
-    --chart-1: 0.72 0.09 85;
+    --border: 0.88 0.02 82;
+    --input: 0.9 0.018 82;
+    --ring: 0.62 0.09 78;
+    --chart-1: 0.62 0.09 78;
     --chart-2: 0.6 0.118 184.704;
     --chart-3: 0.398 0.07 227.392;
     --chart-4: 0.828 0.189 84.429;
     --chart-5: 0.769 0.188 70.08;
-    --sidebar: 0.145 0 0;
-    --sidebar-foreground: 0.92 0.012 80;
-    --sidebar-primary: 0.72 0.09 85;
-    --sidebar-primary-foreground: 0.1 0 0;
-    --sidebar-accent: 0.22 0 0;
-    --sidebar-accent-foreground: 0.85 0.01 80;
-    --sidebar-border: 0.28 0.008 70;
-    --sidebar-ring: 0.72 0.09 85;
+    --sidebar: 0.97 0.012 82;
+    --sidebar-foreground: 0.19 0.022 55;
+    --sidebar-primary: 0.62 0.09 78;
+    --sidebar-primary-foreground: 0.99 0.005 85;
+    --sidebar-accent: 0.94 0.014 82;
+    --sidebar-accent-foreground: 0.28 0.02 75;
+    --sidebar-border: 0.88 0.02 82;
+    --sidebar-ring: 0.62 0.09 78;
 
-    /* GHD Brand Colors */
-    --color-charcoal: #0f0f0f;
-    --color-charcoal-mid: #1a1a1a;
-    --color-charcoal-light: #2a2a2a;
-    --color-gold: #c9a84c;
-    --color-gold-light: #e4c87a;
-    --color-gold-dim: #a08332;
-    --color-ivory: #f5f0e8;
-    --color-ivory-muted: #d4cfc6;
+    /* GHD Brand Colors — warm ink on cream/white; gold for accents only */
+    --color-charcoal: #252019;
+    --color-charcoal-mid: #3d352e;
+    --color-charcoal-light: #564d45;
+    --color-gold: #9a7b3c;
+    --color-gold-light: #b8975a;
+    --color-gold-dim: #7d6230;
+    --color-ivory: #252019;
+    --color-ivory-muted: #6e655c;
   }
 
   * {
@@ -56,15 +86,15 @@
 
   html {
     scroll-behavior: smooth;
-    color-scheme: dark;
+    color-scheme: light;
     overflow-x: clip; /* clip avoids breaking position: sticky (unlike hidden) */
   }
 
   body {
     @apply bg-background text-foreground;
     font-family: 'Instrument Serif', Georgia, 'Times New Roman', serif;
-    background-color: #0f0f0f;
-    color: #f5f0e8;
+    background-color: #fcfaf7;
+    color: var(--color-charcoal);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: clip; /* clip avoids breaking position: sticky (unlike hidden) */
@@ -198,7 +228,7 @@ section {
 .gold-divider {
   width: 48px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, #c9a84c, transparent);
+  background: linear-gradient(90deg, transparent, #b8975a, transparent);
   margin: 2rem auto;
 }
 
@@ -206,17 +236,79 @@ section {
   margin-left: 0;
 }
 
+/* Hero — white titles on photography (HeroSection titleOnPhoto) */
+.hero-title-photo span {
+  color: #fafaf9 !important;
+  -webkit-text-stroke: 0.6px rgba(87, 83, 78, 0.95) !important;
+  paint-order: stroke fill;
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.4),
+    0 2px 12px rgba(0, 0, 0, 0.26),
+    0 0 1px rgba(0, 0, 0, 0.32) !important;
+}
+
+.hero-eyebrow-photo.eyebrow {
+  color: #fafaf9 !important;
+  -webkit-text-stroke: 0.55px rgba(100, 96, 90, 0.92);
+  paint-order: stroke fill;
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.38),
+    0 2px 10px rgba(0, 0, 0, 0.24),
+    0 0 1px rgba(0, 0, 0, 0.3);
+}
+
+/* Home — Future section: white type on hero-future photo (see HomePage) */
+.home-future-section .eyebrow,
+.home-future-section .eyebrow--gold-emphasis {
+  color: #fafaf9;
+}
+
+.home-future-section .font-display {
+  color: #fafaf9;
+}
+
+.home-future-section .section-heading {
+  color: #fafaf9;
+}
+
+.home-future-section .body-refined-lg {
+  color: rgba(250, 250, 249, 0.92);
+}
+
+.home-future-section .font-body {
+  color: rgba(250, 250, 249, 0.92);
+}
+
+.home-future-section .font-body strong {
+  color: #fff;
+  font-weight: 600;
+}
+
+.home-future-section em {
+  color: rgba(250, 250, 249, 0.95);
+  font-style: italic;
+}
+
+/* Development Vision — status titles: plain black (overrides home-future-section white) */
+.home-future-section .vision-status-headlines .eyebrow.eyebrow--gold-emphasis,
+.home-future-section .vision-status-headlines .section-heading {
+  color: #0a0a0a;
+  -webkit-text-stroke: 0;
+  paint-order: normal;
+  text-shadow: none;
+}
+
 /* ─── Glassmorphism ──────────────────────────────────────────────── */
 .glass-card {
-  background: rgba(26, 26, 26, 0.6);
+  background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(201, 168, 76, 0.15);
+  border: 1px solid rgba(154, 123, 60, 0.2);
 }
 
 .glass-card:hover {
-  border-color: rgba(201, 168, 76, 0.45);
-  box-shadow: 0 0 40px rgba(201, 168, 76, 0.12);
+  border-color: rgba(154, 123, 60, 0.4);
+  box-shadow: 0 8px 40px rgba(28, 25, 23, 0.06);
 }
 
 /* ─── Hero Sections ──────────────────────────────────────────────── */
@@ -232,11 +324,17 @@ section {
   overflow: hidden;
   border: 0 !important;
   box-shadow: none !important;
-  background-color: #1a1a1a; /* matches next section so no gap shows */
+  background-color: #f4efe6;
 }
 
 .hero-section--black {
-  background-color: #000;
+  background-color: #e9e2d5;
+}
+
+/* Home: search / room picker / date popovers extend below hero without clipping */
+.hero-section.hero-section--search-visible {
+  overflow: visible;
+  z-index: 40;
 }
 
 @media (min-width: 480px) {
@@ -262,31 +360,34 @@ section {
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(15, 15, 15, 0.4) 0%,
-    rgba(15, 15, 15, 0.65) 50%,
-    rgba(15, 15, 15, 0.85) 100%
-  );
-}
-
-/* ─── Navigation ─────────────────────────────────────────────────── */
-.nav-transparent {
+  /* Kept neutral — avoid full-frame cream washes that read as a white vignette */
   background: transparent;
 }
 
+/* ─── Navigation (frosted glass — no milky white bar) ───────────── */
+.nav-transparent {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(16px) saturate(145%);
+  -webkit-backdrop-filter: blur(16px) saturate(145%);
+  border-bottom: 1px solid rgba(28, 25, 23, 0.07);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32);
+}
+
 .nav-transparent:hover {
-  background: rgba(15, 15, 15, 0.95);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+  background: rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(20px) saturate(155%);
+  -webkit-backdrop-filter: blur(20px) saturate(155%);
+  border-bottom-color: rgba(28, 25, 23, 0.1);
 }
 
 .nav-solid {
-  background: rgba(15, 15, 15, 0.95);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(22px) saturate(165%);
+  -webkit-backdrop-filter: blur(22px) saturate(165%);
+  border-bottom: 1px solid rgba(28, 25, 23, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 4px 20px rgba(28, 25, 23, 0.06);
 }
 
 /* ─── Buttons ────────────────────────────────────────────────────── */
@@ -296,8 +397,8 @@ section {
   justify-content: center;
   padding: 0.875rem 1.5rem;
   min-height: 44px;
-  border: 1px solid #c9a84c;
-  color: #c9a84c;
+  border: 1px solid #b8975a;
+  color: #b8975a;
   font-family: 'General Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 0.7rem;
   font-weight: 500;
@@ -323,7 +424,7 @@ section {
   content: '';
   position: absolute;
   inset: 0;
-  background: #c9a84c;
+  background: #b8975a;
   transform: scaleX(0);
   transform-origin: right;
   transition: transform 0.35s ease;
@@ -342,7 +443,7 @@ section {
 }
 
 .btn-gold:hover {
-  color: #0f0f0f;
+  color: var(--color-charcoal);
 }
 
 .btn-gold-filled {
@@ -351,15 +452,15 @@ section {
   justify-content: center;
   padding: 0.875rem 1.5rem;
   min-height: 44px;
-  background: #c9a84c;
-  color: #0f0f0f;
+  background: #b8975a;
+  color: var(--color-charcoal);
   font-family: 'General Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   text-decoration: none;
-  border: 1px solid #c9a84c;
+  border: 1px solid #b8975a;
   cursor: pointer;
   transition: all 0.35s ease;
 }
@@ -373,8 +474,8 @@ section {
 }
 
 .btn-gold-filled:hover {
-  background: #e4c87a;
-  border-color: #e4c87a;
+  background: #b8975a;
+  border-color: #b8975a;
 }
 
 /* ─── Section Padding ────────────────────────────────────────────── */
@@ -406,13 +507,42 @@ section {
   }
 }
 
+/* Tighter sections — about / brand / vision / contact landers */
+.section-pad-compact {
+  padding: 2.5rem 1rem 2.75rem;
+}
+
+@media (min-width: 375px) {
+  .section-pad-compact {
+    padding: 2.75rem 1.25rem 3rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .section-pad-compact {
+    padding: 3rem 1.5rem 3.25rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .section-pad-compact {
+    padding: 3.25rem 2rem 3.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .section-pad-compact {
+    padding: 3.5rem 2rem 4rem;
+  }
+}
+
 /* ─── Feature Grid ───────────────────────────────────────────────── */
 .feature-item {
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
   padding: 1rem 1.25rem;
-  border: 1px solid rgba(201, 168, 76, 0.12);
+  border: 1px solid rgba(154, 123, 60, 0.22);
   transition: border-color 0.3s ease, background 0.3s ease;
 }
 
@@ -424,41 +554,39 @@ section {
 }
 
 .feature-item:hover {
-  border-color: rgba(201, 168, 76, 0.35);
-  background: rgba(201, 168, 76, 0.04);
+  border-color: rgba(154, 123, 60, 0.45);
+  background: rgba(244, 239, 230, 0.65);
 }
 
-/* ─── Nav Hover Glow ─────────────────────────────────────────────── */
+/* ─── Nav link hover (dark grey labels — no light glow) ──────────── */
 .nav-link:hover {
-  text-shadow:
-    0 0 8px rgba(201, 168, 76, 0.9),
-    0 0 14px rgba(201, 168, 76, 0.7);
+  text-shadow: none;
 }
 
 /* ─── Text Styles ────────────────────────────────────────────────── */
 .text-gold {
-  color: #c9a84c;
+  color: #b8975a;
 }
 
 .text-gold-light {
-  color: #e4c87a;
+  color: #b8975a;
 }
 
 .text-ivory {
-  color: #f5f0e8;
+  color: var(--color-charcoal);
 }
 
 .text-ivory-muted {
-  color: #d4cfc6;
+  color: #57534e;
 }
 
 .eyebrow {
   font-family: 'General Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 0.7rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #c9a84c;
+  color: var(--color-charcoal);
 }
 
 @media (min-width: 640px) {
@@ -468,21 +596,11 @@ section {
   }
 }
 
-/* Gold glow + light stroke for section eyebrows (e.g. home page labels) */
+/* Stronger section label on light backgrounds (same ink, slightly more open tracking) */
 .eyebrow--gold-emphasis {
-  text-shadow:
-    0 0 10px rgba(201, 168, 76, 0.95),
-    0 0 22px rgba(201, 168, 76, 0.65),
-    0 0 36px rgba(201, 168, 76, 0.38),
-    0 1px 3px rgba(0, 0, 0, 0.6);
-  -webkit-text-stroke: 0.45px rgba(62, 50, 24, 0.55);
-  paint-order: stroke fill;
-}
-
-/* Conceptual-image legal line — thin weight, dim (heroes, brands, footer) */
-.conceptual-disclaimer {
-  font-weight: 100;
-  color: #7d7970;
+  color: var(--color-charcoal);
+  font-weight: 700;
+  letter-spacing: 0.32em;
 }
 
 /* Footer: legal strip spacing (overrides layout utilities that zero padding) */
@@ -513,12 +631,106 @@ footer.footer-shell .footer-bottom-bar {
   }
 }
 
+/* Nivaãra philosophy: fixed Buddha background only; clipped to section; text scrolls over scrim */
+.nivaara-philosophy-section {
+  min-height: min(100dvh, 56rem);
+  overflow: hidden;
+  clip-path: inset(0);
+  -webkit-clip-path: inset(0);
+}
+
+.nivaara-philosophy-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url("/assets/generated/buddha.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  transform: translateZ(0);
+}
+
+.nivaara-philosophy-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: rgba(15, 12, 10, 0.44);
+}
+
+/* Celéstra philosophy: fixed pathway photo + scrim (same pattern as Nivaãra Buddha) */
+.celestra-philosophy-section {
+  min-height: min(100dvh, 56rem);
+  overflow: hidden;
+  clip-path: inset(0);
+  -webkit-clip-path: inset(0);
+}
+
+.celestra-philosophy-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  /* URL set on section via --celestra-philosophy-bg (CelestraPage); fallback = pathway */
+  background-image: var(
+    --celestra-philosophy-bg,
+    url("/assets/generated/pathway.png")
+  );
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  transform: translateZ(0);
+}
+
+.celestra-philosophy-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: rgba(15, 12, 10, 0.44);
+}
+
+/* Samrāya philosophy: fixed royal lady photo + scrim */
+.samraya-philosophy-section {
+  min-height: min(100dvh, 56rem);
+  overflow: hidden;
+  clip-path: inset(0);
+  -webkit-clip-path: inset(0);
+}
+
+.samraya-philosophy-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url("/assets/generated/royallady.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  transform: translateZ(0);
+}
+
+.samraya-philosophy-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: rgba(15, 12, 10, 0.44);
+}
+
 /* ─── Form Styles ────────────────────────────────────────────────── */
 .ghd-input {
   width: 100%;
-  background: rgba(42, 42, 42, 0.6);
-  border: 1px solid rgba(201, 168, 76, 0.2);
-  color: #f5f0e8;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(154, 123, 60, 0.28);
+  color: var(--color-charcoal);
   padding: 0.875rem 1.25rem;
   font-family: 'General Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 1rem;
@@ -527,19 +739,19 @@ footer.footer-shell .footer-bottom-bar {
 }
 
 .ghd-input:focus {
-  border-color: #c9a84c;
-  box-shadow: 0 0 0 1px rgba(201, 168, 76, 0.3);
+  border-color: #9a7b3c;
+  box-shadow: 0 0 0 1px rgba(154, 123, 60, 0.25);
 }
 
 .ghd-input::placeholder {
-  color: rgba(212, 207, 198, 0.4);
+  color: rgba(87, 83, 78, 0.45);
 }
 
 /* ─── Mobile Nav ─────────────────────────────────────────────────── */
 .mobile-menu {
   position: fixed;
   inset: 0;
-  background: rgba(10, 10, 10, 0.97);
+  background: rgba(252, 250, 247, 0.97);
   backdrop-filter: blur(20px);
   z-index: 100;
   display: flex;
@@ -555,11 +767,11 @@ footer.footer-shell .footer-bottom-bar {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0f0f0f;
+  background: #f4efe6;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c9a84c;
+  background: #c4b59a;
   border-radius: 2px;
 }
 
@@ -601,7 +813,7 @@ footer.footer-shell .footer-bottom-bar {
   font-size: clamp(2.5rem, 5vw, 5rem);
   line-height: 1.08;
   letter-spacing: 0.035em;
-  color: #f5f0e8;
+  color: var(--color-charcoal);
 }
 
 .section-subheading {
@@ -610,7 +822,7 @@ footer.footer-shell .footer-bottom-bar {
   font-size: clamp(1.75rem, 3vw, 2.75rem);
   line-height: 1.15;
   letter-spacing: 0.03em;
-  color: #f5f0e8;
+  color: var(--color-charcoal);
 }
 
 .body-refined {
@@ -619,7 +831,7 @@ footer.footer-shell .footer-bottom-bar {
   font-size: 1.1rem;
   line-height: 1.85;
   letter-spacing: 0.01em;
-  color: rgba(245, 240, 232, 0.6);
+  color: rgba(61, 53, 46, 0.92);
 }
 
 .body-refined-lg {
@@ -628,17 +840,17 @@ footer.footer-shell .footer-bottom-bar {
   font-size: 1.2rem;
   line-height: 1.85;
   letter-spacing: 0.01em;
-  color: rgba(245, 240, 232, 0.7);
+  color: rgba(61, 53, 46, 0.94);
 }
 
 /* ─── Brand-specific accent colors ───────────────────────────────── */
-.celestra-accent { color: #c9a84c; }
+.celestra-accent { color: #b8975a; }
 .samraya-accent { color: #b8975a; }
-.nivaara-accent  { color: #a89070; }
+.nivaara-accent  { color: #b8975a; }
 
 /* ─── Vision pillars ─────────────────────────────────────────────── */
 .pillar-card {
-  border: 1px solid rgba(201, 168, 76, 0.12);
+  border: 1px solid rgba(154, 123, 60, 0.22);
   padding: 1.5rem;
   position: relative;
   overflow: hidden;
@@ -664,14 +876,14 @@ footer.footer-shell .footer-bottom-bar {
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #c9a84c, transparent);
+  background: linear-gradient(90deg, transparent, #b8975a, transparent);
   opacity: 0;
   transition: opacity 0.4s ease;
 }
 
 .pillar-card:hover {
-  border-color: rgba(201, 168, 76, 0.3);
-  background: rgba(201, 168, 76, 0.03);
+  border-color: rgba(154, 123, 60, 0.42);
+  background: rgba(244, 239, 230, 0.55);
 }
 
 .pillar-card:hover::before {
@@ -680,20 +892,18 @@ footer.footer-shell .footer-bottom-bar {
 
 /* About page: make principle card number glow on card hover */
 .pillar-number {
-  color: rgba(201, 168, 76, 0.12);
+  color: rgba(154, 123, 60, 0.18);
   transition: color 0.35s ease, text-shadow 0.35s ease;
 }
 
 .pillar-card:hover .pillar-number {
-  color: rgba(201, 168, 76, 0.9);
-  text-shadow:
-    0 0 12px rgba(201, 168, 76, 0.7),
-    0 0 24px rgba(201, 168, 76, 0.35);
+  color: rgba(122, 95, 42, 0.85);
+  text-shadow: none;
 }
 
 /* ─── Star rating ─────────────────────────────────────────────────── */
 .star-rating {
-  color: #c9a84c;
+  color: #b8975a;
   letter-spacing: 0.1em;
   font-size: 0.875rem;
 }

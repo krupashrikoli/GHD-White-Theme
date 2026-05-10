@@ -10,3 +10,7 @@ dist/
 *.log
 .vite/
 **/.vite/
+
+# Large video assets — keep locally; avoids Git HTTPS push timeouts (host via CDN if needed)
+src/frontend/public/assets/generated/MainPage.mov
+src/frontend/public/assets/generated/WhatsApp Video 2026-04-27 at 17.02.37.mp4

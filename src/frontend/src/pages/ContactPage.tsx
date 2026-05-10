@@ -1,8 +1,14 @@
 import { Link } from "@tanstack/react-router";
 import { Mail, MapPin, Phone } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Footer } from "../components/Footer";
+import { HeroSection } from "../components/HeroSection";
+import { StickyHomeSearchDock } from "../components/StickyHomeSearchDock";
 import { useScrollAnimationAll } from "../hooks/useScrollAnimation";
+import { mailApiUrl } from "../lib/mailApi";
+
+/** Add your hero image under `public/` and set this, e.g. `"/assets/contact/hero.jpg"`. */
+const CONTACT_HERO_IMAGE: string | undefined = "/assets/generated/contact.png";
 
 interface FormState {
   name: string;
@@ -13,6 +19,7 @@ interface FormState {
 
 export function ContactPage() {
   useScrollAnimationAll();
+  const heroWrapRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     document.title = "Contact GHD Hotels – Get in Touch";
@@ -45,27 +52,99 @@ export function ContactPage() {
     setStatus("loading");
     setErrorMsg("");
 
-    const subject = `New enquiry from ${form.name}`;
-    const bodyLines = [
-      `Name: ${form.name}`,
-      `Email: ${form.email}`,
-      `Phone: ${form.phone || "Not provided"}`,
-      "",
-      "Message:",
-      form.message,
-    ];
-    const mailto = `mailto:info@ghdhotels.in?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
-      bodyLines.join("\n"),
-    )}`;
+    try {
+      const res = await fetch(mailApiUrl("/api/contact"), {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          message: form.message,
+        }),
+      });
 
-    window.location.href = mailto;
-    setStatus("idle");
+      const contentType = res.headers.get("content-type") || "";
+      const raw = await res.text();
+      let data: { ok?: boolean; error?: string } = {};
+      if (contentType.includes("application/json")) {
+        try {
+          data = JSON.parse(raw) as { ok?: boolean; error?: string };
+        } catch {
+          data = {};
+        }
+      }
+
+      if (!res.ok) {
+        const detail =
+          data.error ||
+          (raw && !contentType.includes("application/json")
+            ? raw.slice(0, 200)
+            : "") ||
+          res.statusText ||
+          "Request failed";
+        throw new Error(detail);
+      }
+      if (data.ok === false) {
+        throw new Error(data.error || "Failed to send message.");
+      }
+
+      setForm({ name: "", email: "", phone: "", message: "" });
+      setStatus("success");
+    } catch (err) {
+      setErrorMsg(
+        err instanceof Error ? err.message : "Failed to send message.",
+      );
+      setStatus("error");
+    }
   };
 
   return (
-    <div className="bg-charcoal min-h-screen home-test-font">
+    <div className="bg-cream min-h-screen home-test-font">
+      <div ref={heroWrapRef}>
+        <HeroSection
+          bgImage={CONTACT_HERO_IMAGE}
+          screenReaderHeading="Contact GHD Hotels"
+        />
+      </div>
+      <StickyHomeSearchDock boundaryRef={heroWrapRef} />
+
+      <section
+        aria-labelledby="contact-page-title"
+        className="border-b border-stone-200/70 bg-cream px-4 py-8 sm:px-6 sm:py-10 md:py-12 lg:px-10"
+      >
+        <div className="mx-auto max-w-4xl text-center">
+          <h1
+            id="contact-page-title"
+            className="font-display text-black"
+            style={{
+              fontFamily: "Instrument Serif, Georgia, serif",
+              fontWeight: 500,
+              fontSize: "clamp(2.25rem, 5vw, 4rem)",
+              letterSpacing: "0.03em",
+              lineHeight: 1.08,
+            }}
+          >
+            Contact Us
+          </h1>
+          <p
+            className="mx-auto mt-6 max-w-2xl text-black sm:mt-8"
+            style={{
+              fontFamily:
+                '"Zapfino", "Snell Roundhand", "Apple Chancery", "Segoe Script", "Brush Script MT", cursive',
+              fontSize: "clamp(1.05rem, 2.2vw, 1.85rem)",
+              fontWeight: 400,
+              letterSpacing: "0.02em",
+              lineHeight: 1.45,
+            }}
+          >
+            GHD Hotels
+          </p>
+        </div>
+      </section>
+
       {/* Contact Layout */}
-      <section className="section-pad bg-charcoal-mid">
+      <section className="section-pad-compact bg-cream-muted">
         <div className="max-w-6xl mx-auto px-4 sm:px-0">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-16">
             {/* Left: Info */}
@@ -98,7 +177,7 @@ export function ContactPage() {
                       Address
                     </p>
                     <address
-                      className="font-body text-ivory-muted/70 not-italic leading-relaxed text-base"
+                      className="font-body text-charcoal/70 not-italic leading-relaxed text-base"
                       style={{
                         fontFamily: "General Sans, Helvetica Neue, sans-serif",
                         fontWeight: 300,
@@ -120,18 +199,16 @@ export function ContactPage() {
                     <Mail size={18} className="text-gold" />
                   </div>
                   <div>
-                    <p className="eyebrow eyebrow--gold-emphasis mb-2">
-                      Email
-                    </p>
+                    <p className="eyebrow eyebrow--gold-emphasis mb-2">Email</p>
                     <a
-                      href="mailto:info@ghdhotels.in"
-                      className="font-body text-ivory-muted/70 text-base hover:text-gold transition-colors duration-300"
+                      href="mailto:reservation@ghdhotels.in"
+                      className="font-body text-charcoal/70 text-base hover:text-gold transition-colors duration-300"
                       style={{
                         fontFamily: "General Sans, Helvetica Neue, sans-serif",
                         fontWeight: 300,
                       }}
                     >
-                      info@ghdhotels.in
+                      reservation@ghdhotels.in
                     </a>
                   </div>
                 </div>
@@ -141,18 +218,16 @@ export function ContactPage() {
                     <Phone size={18} className="text-gold" />
                   </div>
                   <div>
-                    <p className="eyebrow eyebrow--gold-emphasis mb-2">
-                      Phone
-                    </p>
+                    <p className="eyebrow eyebrow--gold-emphasis mb-2">Phone</p>
                     <a
-                      href="tel:+910832000000"
-                      className="font-body text-ivory-muted/70 text-base hover:text-gold transition-colors duration-300"
+                      href="tel:+918380008687"
+                      className="font-body text-charcoal/70 text-base hover:text-gold transition-colors duration-300"
                       style={{
                         fontFamily: "General Sans, Helvetica Neue, sans-serif",
                         fontWeight: 300,
                       }}
                     >
-                      +91 (0) 832 000 0000
+                      +91 8380008687
                     </a>
                   </div>
                 </div>
@@ -165,9 +240,12 @@ export function ContactPage() {
                 </p>
                 <div className="flex flex-col gap-3">
                   {[
-                    { to: "/samraya", label: "Samrāya — 5★ Luxury Hotels" },
-                    { to: "/celestra", label: "Celéstra — 4★ Premium Hotels" },
-                    { to: "/nivaara", label: "Nivaãra — 3★ Smart Comfort Hotels" },
+                    { to: "/samraya", label: "Samrāya — Luxury Hotels" },
+                    { to: "/celestra", label: "Celéstra — Premium Hotels" },
+                    {
+                      to: "/nivaara",
+                      label: "Nivaãra — Smart Comfort Hotels",
+                    },
                   ].map((brand) => (
                     <Link
                       key={brand.label}
@@ -176,7 +254,7 @@ export function ContactPage() {
                     >
                       <span className="w-5 h-px bg-gold flex-shrink-0" />
                       <span
-                        className="font-body text-sm text-ivory-muted/60 group-hover:text-gold transition-colors duration-300"
+                        className="font-body text-sm text-charcoal/60 group-hover:text-gold transition-colors duration-300"
                         style={{
                           fontFamily:
                             "General Sans, Helvetica Neue, sans-serif",
@@ -194,7 +272,7 @@ export function ContactPage() {
             <div className="animate-on-scroll-right delay-200 min-w-0">
               <div className="border border-gold/15 p-5 sm:p-8 md:p-10">
                 <h3
-                  className="font-display text-ivory text-2xl mb-2"
+                  className="font-display text-charcoal text-2xl mb-2"
                   style={{
                     fontFamily: "Instrument Serif, Georgia, serif",
                     fontWeight: 400,
@@ -203,7 +281,7 @@ export function ContactPage() {
                   Send Us a Message
                 </h3>
                 <p
-                  className="font-body text-base text-ivory-muted/55 mb-8"
+                  className="font-body text-base text-charcoal/55 mb-8"
                   style={{
                     fontFamily: "General Sans, Helvetica Neue, sans-serif",
                     fontWeight: 300,
@@ -225,7 +303,7 @@ export function ContactPage() {
                       Message Received
                     </p>
                     <p
-                      className="font-body text-ivory-muted/60 text-base leading-relaxed"
+                      className="font-body text-charcoal/60 text-base leading-relaxed"
                       style={{
                         fontFamily: "General Sans, Helvetica Neue, sans-serif",
                         fontWeight: 300,
