@@ -113,7 +113,7 @@ export function SamrayaPage() {
   }, []);
 
   return (
-    <div className="bg-cream-deep min-h-screen overflow-x-clip">
+    <div className="bg-cream min-h-screen overflow-x-clip">
       <div ref={heroWrapRef}>
         <HeroSection
           bgImage="/assets/generated/hero-samraya.dim_1920x1080.png"
@@ -125,7 +125,7 @@ export function SamrayaPage() {
 
       <section
         aria-labelledby="samraya-page-title"
-        className="border-b border-stone-200/70 bg-cream px-4 py-8 sm:px-6 sm:py-10 md:py-12 lg:px-10"
+        className="border-b border-stone-200/70 bg-cream-deep px-4 py-8 sm:px-6 sm:py-10 md:py-12 lg:px-10"
       >
         <div className="mx-auto max-w-4xl text-center">
           <h1
@@ -158,7 +158,7 @@ export function SamrayaPage() {
       </section>
 
       {/* Brand Introduction */}
-      <section className="section-pad-compact relative z-0 bg-cream-deep">
+      <section className="section-pad-compact relative z-0 bg-white border-t border-stone-200/60">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-0">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 lg:gap-16 items-center">
             <div className="lg:col-span-7 text-justify">
@@ -310,7 +310,7 @@ export function SamrayaPage() {
       </section>
 
       {/* Samrāya Offerings */}
-      <section className="section-pad-compact relative z-10 bg-cream-deep">
+      <section className="section-pad-compact relative z-10 bg-cream border-t border-stone-200/50">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-0">
           <div className="text-center mb-8 sm:mb-12 lg:mb-16">
             <p
@@ -372,7 +372,7 @@ export function SamrayaPage() {
       </section>
 
       {/* Under Development Banner */}
-      <section className="py-10 sm:py-14 lg:py-16 bg-cream-deep">
+      <section className="py-10 sm:py-14 lg:py-16 bg-white border-t border-stone-200/50">
         <div className="max-w-3xl mx-auto text-center px-4 sm:px-6">
           <div
             className="p-6 sm:p-8 lg:p-12 animate-on-scroll"

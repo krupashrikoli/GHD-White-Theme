@@ -111,7 +111,7 @@ export function ContactPage() {
 
       <section
         aria-labelledby="contact-page-title"
-        className="border-b border-stone-200/70 bg-cream px-4 py-8 sm:px-6 sm:py-10 md:py-12 lg:px-10"
+        className="border-b border-stone-200/70 bg-cream-deep px-4 py-8 sm:px-6 sm:py-10 md:py-12 lg:px-10"
       >
         <div className="mx-auto max-w-4xl text-center">
           <h1
@@ -144,7 +144,7 @@ export function ContactPage() {
       </section>
 
       {/* Contact Layout */}
-      <section className="section-pad-compact bg-cream-muted">
+      <section className="section-pad-compact bg-white border-t border-stone-200/60">
         <div className="max-w-6xl mx-auto px-4 sm:px-0">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-16">
             {/* Left: Info */}

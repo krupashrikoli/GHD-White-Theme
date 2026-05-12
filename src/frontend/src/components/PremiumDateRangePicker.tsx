@@ -80,8 +80,10 @@ export function PremiumDateRangePicker(props: {
   checkIn: IsoDate;
   checkOut: IsoDate;
   onChange: (next: { checkIn: IsoDate; checkOut: IsoDate }) => void;
+  /** Single horizontal row (check-in | check-out), no stacked labels — for sticky toolbar. */
+  oneLine?: boolean;
 }) {
-  const { checkIn, checkOut, onChange } = props;
+  const { checkIn, checkOut, onChange, oneLine } = props;
   const [open, setOpen] = useState(false);
   const [hoverISO, setHoverISO] = useState<IsoDate>("");
 
@@ -171,33 +173,35 @@ export function PremiumDateRangePicker(props: {
     checkOutDate ? isSameDay(d, checkOutDate) : false;
 
   return (
-    <div ref={rootRef} className="relative">
-      <div className="grid grid-cols-2 gap-2">
-        <div className="flex min-w-0 flex-col gap-0.5 text-left">
-          <span className="text-[0.58rem] font-semibold uppercase tracking-[0.18em] text-gold">
-            Check-in
-          </span>
+    <div
+      ref={rootRef}
+      className={oneLine ? "relative min-w-0 flex-1" : "relative"}
+    >
+      {oneLine ? (
+        <div className="flex min-w-0 items-stretch gap-1">
+          <span className="sr-only">Check-in</span>
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
-            className="h-9 w-full cursor-pointer rounded-md border border-gold/45 bg-white px-2 text-left text-xs text-charcoal outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/25"
+            className="flex h-9 min-w-0 flex-1 cursor-pointer items-center truncate rounded-md border border-gold/45 bg-white px-1.5 text-left text-[0.7rem] text-charcoal outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/25 sm:px-2 sm:text-xs"
             aria-label="Check-in date"
             data-ocid="home.search.checkin"
           >
             <span className={checkIn ? "text-charcoal" : "text-charcoal/45"}>
-              {checkIn ? formatDisplay(checkIn) : "Select date"}
+              {checkIn ? formatDisplay(checkIn) : "In"}
             </span>
           </button>
-        </div>
-
-        <div className="flex min-w-0 flex-col gap-0.5 text-left">
-          <span className="text-[0.58rem] font-semibold uppercase tracking-[0.18em] text-gold">
-            Check-out
+          <span
+            className="flex shrink-0 select-none items-center px-0.5 text-[0.65rem] text-charcoal/35"
+            aria-hidden
+          >
+            –
           </span>
+          <span className="sr-only">Check-out</span>
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="h-9 w-full cursor-pointer rounded-md border border-gold/45 bg-white px-2 text-left text-xs text-charcoal outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/25"
+            className="flex h-9 min-w-0 flex-1 cursor-pointer items-center truncate rounded-md border border-gold/45 bg-white px-1.5 text-left text-[0.7rem] text-charcoal outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/25 sm:px-2 sm:text-xs"
             aria-label="Check-out date"
             data-ocid="home.search.checkout"
           >
@@ -205,12 +209,52 @@ export function PremiumDateRangePicker(props: {
               {checkOut
                 ? formatDisplay(checkOut)
                 : checkIn
-                  ? "Select date"
-                  : "Select check-in first"}
+                  ? "Out"
+                  : "—"}
             </span>
           </button>
         </div>
-      </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-2">
+          <div className="flex min-w-0 flex-col gap-0.5 text-left">
+            <span className="text-[0.58rem] font-semibold uppercase tracking-[0.18em] text-gold">
+              Check-in
+            </span>
+            <button
+              type="button"
+              onClick={() => setOpen((v) => !v)}
+              className="h-9 w-full cursor-pointer rounded-md border border-gold/45 bg-white px-2 text-left text-xs text-charcoal outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/25"
+              aria-label="Check-in date"
+              data-ocid="home.search.checkin"
+            >
+              <span className={checkIn ? "text-charcoal" : "text-charcoal/45"}>
+                {checkIn ? formatDisplay(checkIn) : "Select date"}
+              </span>
+            </button>
+          </div>
+
+          <div className="flex min-w-0 flex-col gap-0.5 text-left">
+            <span className="text-[0.58rem] font-semibold uppercase tracking-[0.18em] text-gold">
+              Check-out
+            </span>
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              className="h-9 w-full cursor-pointer rounded-md border border-gold/45 bg-white px-2 text-left text-xs text-charcoal outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/25"
+              aria-label="Check-out date"
+              data-ocid="home.search.checkout"
+            >
+              <span className={checkOut ? "text-charcoal" : "text-charcoal/45"}>
+                {checkOut
+                  ? formatDisplay(checkOut)
+                  : checkIn
+                    ? "Select date"
+                    : "Select check-in first"}
+              </span>
+            </button>
+          </div>
+        </div>
+      )}
 
       <div
         className={`absolute z-50 left-0 right-0 bottom-full mb-2 origin-bottom rounded-xl border border-gold/40 bg-ivory p-3 shadow-xl shadow-black/20 transition-all duration-200 sm:p-4 ${

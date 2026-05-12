@@ -15,9 +15,15 @@ import {
 type Props = {
   rooms: RoomOccupancy[];
   onChange: (next: RoomOccupancy[]) => void;
+  /** Sticky floating dock: cap width so the row stays compact. */
+  floatingDock?: boolean;
 };
 
-export function RoomGuestsSelector({ rooms, onChange }: Props) {
+export function RoomGuestsSelector({
+  rooms,
+  onChange,
+  floatingDock,
+}: Props) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -69,8 +75,21 @@ export function RoomGuestsSelector({ rooms, onChange }: Props) {
   };
 
   return (
-    <div ref={rootRef} className="relative min-w-0 flex-1 lg:max-w-[260px]">
-      <span className="mb-0.5 block text-[0.58rem] font-semibold uppercase tracking-[0.18em] text-gold">
+    <div
+      ref={rootRef}
+      className={
+        floatingDock
+          ? "relative min-w-0 flex-1 basis-0"
+          : "relative min-w-0 flex-1 lg:max-w-[260px]"
+      }
+    >
+      <span
+        className={
+          floatingDock
+            ? "sr-only"
+            : "mb-0.5 block text-[0.58rem] font-semibold uppercase tracking-[0.18em] text-gold"
+        }
+      >
         Rooms &amp; guests
       </span>
       <button

@@ -37,12 +37,12 @@ export default {
           DEFAULT: '#f5f0e8',
           muted: '#d4cfc6',
         },
-        /** Page backgrounds — white / warm beige */
+        /** Page backgrounds — white / warm beige (one step darker than prior cream) */
         cream: {
-          DEFAULT: '#fcfaf7',
-          muted: '#f4efe6',
-          deep: '#e9e2d5',
-          card: '#f7f3ec',
+          DEFAULT: '#f5f1ea',
+          muted: '#eae3d6',
+          deep: '#ddd4c4',
+          card: '#efe9de',
         },
         border: "oklch(var(--border))",
         input: "oklch(var(--input))",

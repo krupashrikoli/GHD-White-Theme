@@ -6,6 +6,9 @@ import {
   type HomeSearchValues,
 } from "./HomeSearchBar";
 
+/** Pixels from document bottom; dock hides so footer / legal copy are not covered. */
+const HIDE_NEAR_BOTTOM_PX = 200;
+
 type StickyHomeSearchDockProps = {
   /** Element whose bottom edge triggers the dock (typically a wrapper around the hero). */
   boundaryRef: RefObject<HTMLElement | null>;
@@ -14,7 +17,7 @@ type StickyHomeSearchDockProps = {
 };
 
 /**
- * Bottom fixed booking search — same behavior as the home page after scrolling past the hero.
+ * Floating booking search card — appears after scrolling past the hero, hides near page bottom.
  */
 export function StickyHomeSearchDock({
   boundaryRef,
@@ -29,7 +32,15 @@ export function StickyHomeSearchDock({
     const update = () => {
       const el = boundaryRef.current;
       if (!el) return;
-      setShow(el.getBoundingClientRect().bottom <= thresholdPx);
+      const pastHero = el.getBoundingClientRect().bottom <= thresholdPx;
+      const scrollHeight = Math.max(
+        document.documentElement.scrollHeight,
+        document.body.scrollHeight,
+      );
+      const distanceToBottom =
+        scrollHeight - (window.scrollY + window.innerHeight);
+      const nearBottom = distanceToBottom <= HIDE_NEAR_BOTTOM_PX;
+      setShow(pastHero && !nearBottom);
     };
     update();
     window.addEventListener("scroll", update, { passive: true });
@@ -50,14 +61,17 @@ export function StickyHomeSearchDock({
     <div
       role="region"
       aria-label="Book a stay"
-      className="fixed inset-x-0 bottom-0 z-[110] border-t border-stone-300/70 bg-white/80 px-2 py-2 shadow-[0_-8px_32px_rgba(28,25,23,0.07)] backdrop-blur-xl sm:px-4"
+      className="pointer-events-none fixed inset-x-0 bottom-0 z-[110] flex justify-center px-3 sm:px-4"
       style={{
-        paddingBottom: "max(0.5rem, env(safe-area-inset-bottom, 0px))",
+        paddingBottom: "max(1rem, calc(0.5rem + env(safe-area-inset-bottom, 0px)))",
       }}
     >
-      <div className="mx-auto max-w-4xl">
+      <div
+        className="pointer-events-auto w-full max-w-[min(100%,30rem)] overflow-x-auto rounded-xl border border-stone-200/90 bg-white/93 px-2.5 py-1.5 shadow-[0_10px_40px_rgba(28,25,23,0.14),0_2px_12px_rgba(28,25,23,0.06)] backdrop-blur-xl sm:max-w-[min(100%,32rem)] sm:rounded-2xl sm:px-3 sm:py-1.5"
+      >
         <HomeSearchBar
           embedded
+          floatingDock
           initial={lifted}
           onValuesChange={syncHomeSearch}
         />

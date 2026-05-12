@@ -117,7 +117,7 @@ export function VisionPage() {
 
       <section
         aria-labelledby="vision-page-title"
-        className="border-b border-stone-200/70 bg-cream px-4 py-8 sm:px-6 sm:py-10 md:py-12 lg:px-10"
+        className="border-b border-stone-200/70 bg-cream-deep px-4 py-8 sm:px-6 sm:py-10 md:py-12 lg:px-10"
       >
         <div className="mx-auto max-w-4xl text-center">
           <h1
@@ -137,7 +137,10 @@ export function VisionPage() {
       </section>
 
       {/* Intro Section */}
-      <section ref={introRef} className="section-pad-compact bg-cream-muted">
+      <section
+        ref={introRef}
+        className="section-pad-compact bg-white border-t border-stone-200/60"
+      >
         <div
           className="max-w-4xl mx-auto text-center px-4 sm:px-0"
           style={{ opacity: introFade, willChange: "opacity" }}
@@ -170,7 +173,10 @@ export function VisionPage() {
       </section>
 
       {/* Four Pillars */}
-      <section ref={pillarsRef} className="section-pad-compact bg-cream">
+      <section
+        ref={pillarsRef}
+        className="section-pad-compact bg-cream border-t border-stone-200/50"
+      >
         <div
           className="max-w-6xl mx-auto px-4 sm:px-0"
           style={{ opacity: pillarsFade, willChange: "opacity" }}
@@ -350,7 +356,7 @@ export function VisionPage() {
       {/* CTA */}
       <section
         ref={ctaRef}
-        className="py-12 sm:py-20 bg-cream-muted border-t border-gold/10"
+        className="py-12 sm:py-20 bg-white border-t border-gold/10"
       >
         <div
           className="max-w-3xl mx-auto text-center px-4 sm:px-6"

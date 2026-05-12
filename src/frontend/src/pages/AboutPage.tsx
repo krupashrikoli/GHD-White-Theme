@@ -52,7 +52,7 @@ export function AboutPage() {
   const [quoteFade, setQuoteFade] = useState(0);
 
   useEffect(() => {
-    document.title = "About GHD Hotels – Our Philosophy & Vision";
+    document.title = "Our Story – GHD Hotels";
   }, []);
 
   useEffect(() => {
@@ -104,7 +104,7 @@ export function AboutPage() {
 
       <section
         aria-labelledby="about-page-title"
-        className="border-b border-stone-200/70 bg-cream px-4 py-8 sm:px-6 sm:py-10 md:py-12 lg:px-10"
+        className="border-b border-stone-200/70 bg-cream-deep px-4 py-8 sm:px-6 sm:py-10 md:py-12 lg:px-10"
       >
         <div className="mx-auto max-w-4xl text-center">
           <h1
@@ -140,7 +140,7 @@ export function AboutPage() {
       <section
         id="who-we-are"
         ref={missionRef}
-        className="section-pad-compact bg-cream-muted"
+        className="section-pad-compact bg-white border-t border-stone-200/60"
       >
         <div
           className="max-w-5xl mx-auto px-2 sm:px-0"
@@ -239,7 +239,10 @@ export function AboutPage() {
       </section>
 
       {/* Values Section */}
-      <section ref={valuesRef} className="section-pad-compact bg-cream">
+      <section
+        ref={valuesRef}
+        className="section-pad-compact bg-cream border-t border-stone-200/50"
+      >
         <div
           className="max-w-6xl mx-auto px-2 sm:px-0"
           style={{ opacity: valuesFade, willChange: "opacity" }}
@@ -298,30 +301,37 @@ export function AboutPage() {
       {/* Quote section */}
       <section
         ref={quoteRef}
-        className="section-pad-compact parallax-section relative text-center"
+        className="section-pad-compact parallax-section relative overflow-hidden text-center"
         style={{
           backgroundImage: `url(${ABOUT_COUPLE_HERO_IMAGE})`,
         }}
       >
         <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-[1] bg-black/48"
+        />
+        <div
           className="relative z-10 max-w-3xl mx-auto"
           style={{ opacity: quoteFade, willChange: "opacity" }}
         >
-          <div className="gold-divider animate-on-scroll" />
+          <div className="gold-divider animate-on-scroll opacity-90" />
           <blockquote
-            className="font-display text-charcoal italic animate-on-scroll delay-200"
+            className="font-display italic animate-on-scroll delay-200 text-white"
             style={{
               fontFamily: "Instrument Serif, Georgia, serif",
               fontSize: "clamp(1.6rem, 3.2vw, 2.6rem)",
               lineHeight: 1.4,
               letterSpacing: "0.02em",
               margin: "3rem 0",
+              color: "#ffffff",
+              WebkitTextStroke: "0.55px #000000",
+              paintOrder: "stroke fill",
             }}
           >
             "Hospitality is not an amenity. It is an art form — one that we at
             GHD Hotels are dedicated to mastering, one property at a time."
           </blockquote>
-          <div className="gold-divider animate-on-scroll delay-300" />
+          <div className="gold-divider animate-on-scroll delay-300 opacity-90" />
         </div>
       </section>
 

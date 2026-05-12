@@ -12,7 +12,7 @@ const bookingSearchDefaults = {
 
 const navLinks = [
   { to: "/", label: "Home", ocid: "nav.home.link" },
-  { to: "/about", label: "About", ocid: "nav.about.link" },
+  { to: "/about", label: "Our Story", ocid: "nav.about.link" },
   // Brand order: Nivaãra → Celéstra → Samrāya
   { to: "/nivaara", label: "Nivaãra", ocid: "nav.nivaara.link" },
   { to: "/celestra", label: "Celéstra", ocid: "nav.celestra.link" },

@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { Search } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { PremiumDateRangePicker } from "./PremiumDateRangePicker";
 import { RoomGuestsSelector } from "./RoomGuestsSelector";
 import {
@@ -104,8 +104,13 @@ export function HomeSearchBar(props?: {
   /** Fires whenever dates, guests, or hotel change — use to keep checkout totals in sync */
   onValuesChange?: (values: HomeSearchValues) => void;
   embedded?: boolean;
+  /** Stack fields in a column (e.g. very narrow layouts). */
+  narrowLayout?: boolean;
+  /** Sticky floating dock: single-row toolbar. */
+  floatingDock?: boolean;
 }) {
   const navigate = useNavigate();
+  const hotelSelectId = useId();
   const [hotelId, setHotelId] = useState(
     () => props?.initial?.hotelId ?? "nivaara-nerul",
   );
@@ -210,26 +215,57 @@ export function HomeSearchBar(props?: {
       data-ocid="home.search.bar"
     >
       <div
-        className="flex flex-col gap-2 lg:flex-row lg:items-stretch lg:gap-2.5"
+        className={
+          props?.narrowLayout
+            ? "flex flex-col gap-2"
+            : props?.floatingDock
+              ? "flex w-full min-w-0 flex-row flex-nowrap items-center gap-1.5 sm:gap-2"
+              : "flex flex-col gap-2 lg:flex-row lg:items-stretch lg:gap-2.5"
+        }
       >
-        <div className="flex min-w-0 flex-1 flex-col gap-0.5 text-left">
-          <span className="text-[0.58rem] font-semibold uppercase tracking-[0.18em] text-gold">
-            Hotel
-          </span>
+        <div
+          className={
+            props?.floatingDock
+              ? "flex shrink-0 items-center"
+              : "flex min-w-0 flex-1 flex-col gap-0.5 text-left"
+          }
+        >
+          {props?.floatingDock ? (
+            <label htmlFor={hotelSelectId} className="sr-only">
+              Hotel
+            </label>
+          ) : (
+            <span className="text-[0.58rem] font-semibold uppercase tracking-[0.18em] text-gold">
+              Hotel
+            </span>
+          )}
           <select
+            id={props?.floatingDock ? hotelSelectId : undefined}
             value={hotelId}
             onChange={(e) => setHotelId(e.target.value)}
-            className="h-9 w-full rounded-md border border-gold/45 bg-white px-2 text-xs text-charcoal outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/25"
-            aria-label="Hotel"
+            className={
+              props?.floatingDock
+                ? "h-9 w-[6.5rem] shrink-0 rounded-md border border-gold/45 bg-white px-1.5 text-[0.7rem] text-charcoal outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/25 sm:w-[7rem] sm:px-2 sm:text-xs"
+                : "h-9 w-full rounded-md border border-gold/45 bg-white px-2 text-xs text-charcoal outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/25"
+            }
+            aria-label={props?.floatingDock ? undefined : "Hotel"}
+            data-ocid="home.search.hotel"
           >
             <option value="nivaara-nerul">Nivaara Nerul</option>
           </select>
         </div>
 
-        <div className="min-w-0 lg:flex-1 lg:min-w-[240px]">
+        <div
+          className={
+            props?.floatingDock
+              ? "min-w-0 flex-1 basis-0"
+              : "min-w-0 lg:flex-1 lg:min-w-[240px]"
+          }
+        >
           <PremiumDateRangePicker
             checkIn={checkIn}
             checkOut={checkOut}
+            oneLine={props?.floatingDock}
             onChange={({ checkIn: ci, checkOut: co }) => {
               if (ci && ci < todayISO) return;
               if (co && co < todayISO) return;
@@ -239,12 +275,28 @@ export function HomeSearchBar(props?: {
           />
         </div>
 
-        <RoomGuestsSelector rooms={rooms} onChange={setRoomsSafe} />
+        <RoomGuestsSelector
+          rooms={rooms}
+          onChange={setRoomsSafe}
+          floatingDock={props?.floatingDock}
+        />
 
-        <div className="flex items-end lg:shrink-0">
+        <div
+          className={
+            props?.floatingDock
+              ? "flex shrink-0 items-center"
+              : "flex items-end lg:shrink-0"
+          }
+        >
           <button
             type="submit"
-            className="btn-gold-filled !min-h-0 flex h-9 min-h-9 w-full items-center justify-center gap-1.5 px-3 py-0 text-[0.65rem] font-semibold tracking-[0.12em] lg:w-auto lg:min-w-[7rem]"
+            className={`btn-gold-filled !min-h-0 flex h-9 min-h-9 items-center justify-center gap-1.5 px-2.5 py-0 text-[0.65rem] font-semibold tracking-[0.12em] ${
+              props?.narrowLayout
+                ? "w-full"
+                : props?.floatingDock
+                  ? "w-auto shrink-0 min-w-[5.25rem]"
+                  : "w-full lg:w-auto lg:min-w-[7rem]"
+            }`}
             data-ocid="home.search.submit"
           >
             <span className="inline-flex items-center gap-1.5">

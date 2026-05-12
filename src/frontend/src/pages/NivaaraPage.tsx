@@ -164,7 +164,7 @@ export function NivaaraPage() {
 
       <section
         aria-labelledby="nivaara-page-title"
-        className="border-b border-stone-200/70 bg-cream px-4 py-8 sm:px-6 sm:py-10 md:py-12 lg:px-10"
+        className="border-b border-stone-200/70 bg-cream-deep px-4 py-8 sm:px-6 sm:py-10 md:py-12 lg:px-10"
       >
         <div className="mx-auto max-w-4xl text-center">
           <h1
@@ -197,7 +197,7 @@ export function NivaaraPage() {
       </section>
 
       {/* Brand Introduction */}
-      <section className="section-pad-compact bg-cream-deep">
+      <section className="section-pad-compact bg-white border-t border-stone-200/60">
         <div className="max-w-5xl mx-auto px-4 sm:px-0">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-16 items-center">
             <div className="lg:col-span-7">
@@ -343,7 +343,7 @@ export function NivaaraPage() {
       </section>
 
       {/* Features Grid */}
-      <section className="section-pad-compact bg-cream-deep">
+      <section className="section-pad-compact bg-cream border-t border-stone-200/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-0">
           <div className="text-center mb-12 sm:mb-16">
             <p
@@ -407,7 +407,7 @@ export function NivaaraPage() {
       {/* Properties */}
       <section
         id="properties"
-        className="py-12 sm:py-16 bg-cream-deep border-t border-gold/10"
+        className="py-12 sm:py-16 bg-white border-t border-gold/10"
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
           <p className="eyebrow eyebrow--gold-emphasis mb-4">Properties</p>

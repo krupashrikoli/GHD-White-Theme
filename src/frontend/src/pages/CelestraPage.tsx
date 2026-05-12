@@ -111,7 +111,7 @@ export function CelestraPage() {
   }, []);
 
   return (
-    <div className="bg-cream-deep min-h-screen celestra-test-font">
+    <div className="bg-cream min-h-screen celestra-test-font">
       <div ref={heroWrapRef}>
         <HeroSection
           bgImage="/assets/generated/hero-celestra.dim_1920x1080.png"
@@ -123,7 +123,7 @@ export function CelestraPage() {
 
       <section
         aria-labelledby="celestra-page-title"
-        className="border-b border-stone-200/70 bg-cream px-4 py-8 sm:px-6 sm:py-10 md:py-12 lg:px-10"
+        className="border-b border-stone-200/70 bg-cream-deep px-4 py-8 sm:px-6 sm:py-10 md:py-12 lg:px-10"
       >
         <div className="mx-auto max-w-4xl text-center">
           <h1
@@ -156,7 +156,7 @@ export function CelestraPage() {
       </section>
 
       {/* Brand Introduction */}
-      <section className="section-pad-compact bg-cream-deep">
+      <section className="section-pad-compact bg-white border-t border-stone-200/60">
         <div className="max-w-5xl mx-auto px-4 sm:px-0">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-16 items-start">
             <div className="lg:col-span-7">
@@ -293,7 +293,7 @@ export function CelestraPage() {
       </section>
 
       {/* Features Grid (Celéstra Offerings) */}
-      <section className="section-pad-compact bg-cream-deep">
+      <section className="section-pad-compact bg-cream border-t border-stone-200/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-0">
           <div className="text-center mb-12 sm:mb-20">
             <p className="eyebrow eyebrow--gold-emphasis animate-on-scroll">
@@ -348,7 +348,7 @@ export function CelestraPage() {
       </section>
 
       {/* Under Development Banner */}
-      <section className="py-16 bg-cream-deep">
+      <section className="py-16 bg-white border-t border-stone-200/50">
         <div className="max-w-3xl mx-auto text-center px-6">
           <div className="border border-gold/25 p-12 animate-on-scroll">
             <div className="gold-divider" />
