@@ -5,11 +5,13 @@ import {
   createRootRoute,
   createRoute,
   createRouter,
+  lazyRouteComponent,
   useLocation,
 } from "@tanstack/react-router";
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { clearPersistedCheckout } from "./components/booking/bookingCheckoutPersistence";
 import { Navbar } from "./components/Navbar";
+import { HomePage } from "./pages/HomePage";
 
 /** Scroll to top on every in-app navigation (links, buttons using navigate, etc.). */
 function ScrollToTop() {
@@ -37,16 +39,43 @@ function BookingCheckoutRoutePersistence() {
   }, [pathname]);
   return null;
 }
-import { AboutPage } from "./pages/AboutPage";
-import { BookingPage } from "./pages/BookingPage";
-import { CareersPage } from "./pages/CareersPage";
-import { CelestraPage } from "./pages/CelestraPage";
-import { ContactPage } from "./pages/ContactPage";
-import { HomePage } from "./pages/HomePage";
-import { NivaaraPage } from "./pages/NivaaraPage";
-import { PoliciesPage } from "./pages/PoliciesPage";
-import { SamrayaPage } from "./pages/SamrayaPage";
-import { VisionPage } from "./pages/VisionPage";
+
+const AboutPage = lazyRouteComponent(
+  () => import("./pages/AboutPage"),
+  "AboutPage",
+);
+const BookingPage = lazyRouteComponent(
+  () => import("./pages/BookingPage"),
+  "BookingPage",
+);
+const CareersPage = lazyRouteComponent(
+  () => import("./pages/CareersPage"),
+  "CareersPage",
+);
+const CelestraPage = lazyRouteComponent(
+  () => import("./pages/CelestraPage"),
+  "CelestraPage",
+);
+const ContactPage = lazyRouteComponent(
+  () => import("./pages/ContactPage"),
+  "ContactPage",
+);
+const NivaaraPage = lazyRouteComponent(
+  () => import("./pages/NivaaraPage"),
+  "NivaaraPage",
+);
+const PoliciesPage = lazyRouteComponent(
+  () => import("./pages/PoliciesPage"),
+  "PoliciesPage",
+);
+const SamrayaPage = lazyRouteComponent(
+  () => import("./pages/SamrayaPage"),
+  "SamrayaPage",
+);
+const VisionPage = lazyRouteComponent(
+  () => import("./pages/VisionPage"),
+  "VisionPage",
+);
 
 // ── Root Layout ─────────────────────────────────────────────────────
 const rootRoute = createRootRoute({
@@ -143,7 +172,19 @@ const routeTree = rootRoute.addChildren([
   careersRoute,
 ]);
 
-const router = createRouter({ routeTree });
+const router = createRouter({
+  routeTree,
+  defaultPendingComponent: () => (
+    <div className="flex min-h-[50vh] items-center justify-center bg-cream">
+      <p
+        className="text-sm font-light tracking-[0.2em] text-charcoal/45 uppercase"
+        style={{ fontFamily: "Inter, system-ui, sans-serif" }}
+      >
+        Loading
+      </p>
+    </div>
+  ),
+});
 
 declare module "@tanstack/react-router" {
   interface Register {

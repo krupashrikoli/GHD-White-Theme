@@ -17,7 +17,9 @@ export default defineConfig({
   build: {
     emptyOutDir: true,
     sourcemap: false,
-    minify: false,
+    /** Smaller bundles and faster parse on the client (default: esbuild). */
+    minify: "esbuild",
+    target: "es2022",
   },
   css: {
     postcss: "./postcss.config.js",
