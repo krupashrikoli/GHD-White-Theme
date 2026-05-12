@@ -298,17 +298,22 @@ export function AboutPage() {
         </div>
       </section>
 
-      {/* Quote section */}
+      {/* Quote section — photo on its own layer + darken for readable quote */}
       <section
         ref={quoteRef}
-        className="section-pad-compact parallax-section relative overflow-hidden text-center"
-        style={{
-          backgroundImage: `url(${ABOUT_COUPLE_HERO_IMAGE})`,
-        }}
+        className="section-pad-compact relative isolate overflow-hidden text-center"
       >
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 z-[1] bg-black/48"
+          className="pointer-events-none absolute inset-0 z-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url(${ABOUT_COUPLE_HERO_IMAGE})`,
+            filter: "brightness(0.85)",
+          }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-b from-black/35 via-black/55 to-black/70"
         />
         <div
           className="relative z-10 max-w-3xl mx-auto"

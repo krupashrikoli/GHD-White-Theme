@@ -79,16 +79,12 @@ export function RoomGuestsSelector({
       ref={rootRef}
       className={
         floatingDock
-          ? "relative min-w-0 flex-1 basis-0"
+          ? "relative flex min-w-0 flex-1 basis-0 flex-col gap-0.5 text-left"
           : "relative min-w-0 flex-1 lg:max-w-[260px]"
       }
     >
       <span
-        className={
-          floatingDock
-            ? "sr-only"
-            : "mb-0.5 block text-[0.58rem] font-semibold uppercase tracking-[0.18em] text-gold"
-        }
+        className="mb-0.5 block text-[0.58rem] font-semibold uppercase tracking-[0.18em] text-gold"
       >
         Rooms &amp; guests
       </span>

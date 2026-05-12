@@ -67,7 +67,7 @@ export function StickyHomeSearchDock({
       }}
     >
       <div
-        className="pointer-events-auto w-full max-w-[min(100%,30rem)] overflow-x-auto rounded-xl border border-stone-200/90 bg-white/93 px-2.5 py-1.5 shadow-[0_10px_40px_rgba(28,25,23,0.14),0_2px_12px_rgba(28,25,23,0.06)] backdrop-blur-xl sm:max-w-[min(100%,32rem)] sm:rounded-2xl sm:px-3 sm:py-1.5"
+        className="pointer-events-auto w-full max-w-[min(100%,30rem)] overflow-x-auto rounded-xl border border-stone-200/90 bg-white/93 px-2.5 py-2 shadow-[0_10px_40px_rgba(28,25,23,0.14),0_2px_12px_rgba(28,25,23,0.06)] backdrop-blur-xl sm:max-w-[min(100%,36rem)] sm:rounded-2xl sm:px-3 sm:py-2"
       >
         <HomeSearchBar
           embedded

@@ -80,7 +80,7 @@ export function PremiumDateRangePicker(props: {
   checkIn: IsoDate;
   checkOut: IsoDate;
   onChange: (next: { checkIn: IsoDate; checkOut: IsoDate }) => void;
-  /** Single horizontal row (check-in | check-out), no stacked labels — for sticky toolbar. */
+  /** Compact labeled row: check-in / check-out each with label above (e.g. sticky dock). */
   oneLine?: boolean;
 }) {
   const { checkIn, checkOut, onChange, oneLine } = props;
@@ -178,41 +178,43 @@ export function PremiumDateRangePicker(props: {
       className={oneLine ? "relative min-w-0 flex-1" : "relative"}
     >
       {oneLine ? (
-        <div className="flex min-w-0 items-stretch gap-1">
-          <span className="sr-only">Check-in</span>
-          <button
-            type="button"
-            onClick={() => setOpen((v) => !v)}
-            className="flex h-9 min-w-0 flex-1 cursor-pointer items-center truncate rounded-md border border-gold/45 bg-white px-1.5 text-left text-[0.7rem] text-charcoal outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/25 sm:px-2 sm:text-xs"
-            aria-label="Check-in date"
-            data-ocid="home.search.checkin"
-          >
-            <span className={checkIn ? "text-charcoal" : "text-charcoal/45"}>
-              {checkIn ? formatDisplay(checkIn) : "In"}
+        <div className="flex min-w-0 flex-1 gap-1 sm:gap-2">
+          <div className="flex min-w-0 flex-1 flex-col gap-0.5 text-left">
+            <span className="text-[0.58rem] font-semibold uppercase tracking-[0.18em] text-gold">
+              Check-in
             </span>
-          </button>
-          <span
-            className="flex shrink-0 select-none items-center px-0.5 text-[0.65rem] text-charcoal/35"
-            aria-hidden
-          >
-            –
-          </span>
-          <span className="sr-only">Check-out</span>
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            className="flex h-9 min-w-0 flex-1 cursor-pointer items-center truncate rounded-md border border-gold/45 bg-white px-1.5 text-left text-[0.7rem] text-charcoal outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/25 sm:px-2 sm:text-xs"
-            aria-label="Check-out date"
-            data-ocid="home.search.checkout"
-          >
-            <span className={checkOut ? "text-charcoal" : "text-charcoal/45"}>
-              {checkOut
-                ? formatDisplay(checkOut)
-                : checkIn
-                  ? "Out"
-                  : "—"}
+            <button
+              type="button"
+              onClick={() => setOpen((v) => !v)}
+              className="flex h-9 min-w-0 w-full cursor-pointer items-center truncate rounded-md border border-gold/45 bg-white px-1.5 text-left text-[0.7rem] text-charcoal outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/25 sm:px-2 sm:text-xs"
+              aria-label="Check-in date"
+              data-ocid="home.search.checkin"
+            >
+              <span className={checkIn ? "text-charcoal" : "text-charcoal/45"}>
+                {checkIn ? formatDisplay(checkIn) : "Select date"}
+              </span>
+            </button>
+          </div>
+          <div className="flex min-w-0 flex-1 flex-col gap-0.5 text-left">
+            <span className="text-[0.58rem] font-semibold uppercase tracking-[0.18em] text-gold">
+              Check-out
             </span>
-          </button>
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              className="flex h-9 min-w-0 w-full cursor-pointer items-center truncate rounded-md border border-gold/45 bg-white px-1.5 text-left text-[0.7rem] text-charcoal outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/25 sm:px-2 sm:text-xs"
+              aria-label="Check-out date"
+              data-ocid="home.search.checkout"
+            >
+              <span className={checkOut ? "text-charcoal" : "text-charcoal/45"}>
+                {checkOut
+                  ? formatDisplay(checkOut)
+                  : checkIn
+                    ? "Select date"
+                    : "Select check-in first"}
+              </span>
+            </button>
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-2">

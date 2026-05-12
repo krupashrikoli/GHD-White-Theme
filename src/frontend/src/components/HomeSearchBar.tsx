@@ -219,19 +219,22 @@ export function HomeSearchBar(props?: {
           props?.narrowLayout
             ? "flex flex-col gap-2"
             : props?.floatingDock
-              ? "flex w-full min-w-0 flex-row flex-nowrap items-center gap-1.5 sm:gap-2"
+              ? "flex w-full min-w-0 flex-row flex-nowrap items-end gap-2 sm:gap-2.5"
               : "flex flex-col gap-2 lg:flex-row lg:items-stretch lg:gap-2.5"
         }
       >
         <div
           className={
             props?.floatingDock
-              ? "flex shrink-0 items-center"
+              ? "flex shrink-0 flex-col gap-0.5 text-left"
               : "flex min-w-0 flex-1 flex-col gap-0.5 text-left"
           }
         >
           {props?.floatingDock ? (
-            <label htmlFor={hotelSelectId} className="sr-only">
+            <label
+              htmlFor={hotelSelectId}
+              className="text-[0.58rem] font-semibold uppercase tracking-[0.18em] text-gold"
+            >
               Hotel
             </label>
           ) : (
@@ -284,10 +287,18 @@ export function HomeSearchBar(props?: {
         <div
           className={
             props?.floatingDock
-              ? "flex shrink-0 items-center"
+              ? "flex shrink-0 flex-col gap-0.5 text-left"
               : "flex items-end lg:shrink-0"
           }
         >
+          {props?.floatingDock ? (
+            <span
+              className="invisible text-[0.58rem] font-semibold uppercase tracking-[0.18em] text-gold select-none"
+              aria-hidden
+            >
+              Hotel
+            </span>
+          ) : null}
           <button
             type="submit"
             className={`btn-gold-filled !min-h-0 flex h-9 min-h-9 items-center justify-center gap-1.5 px-2.5 py-0 text-[0.65rem] font-semibold tracking-[0.12em] ${
