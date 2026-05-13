@@ -164,9 +164,14 @@ export function NivaaraPage() {
 
       <section
         aria-labelledby="nivaara-page-title"
-        className="border-b border-stone-200/70 bg-cream-deep px-4 py-8 sm:px-6 sm:py-10 md:py-12 lg:px-10"
+        className="relative isolate overflow-hidden border-b border-stone-200/70 bg-cream-deep px-4 py-8 sm:px-6 sm:py-10 md:py-12 lg:px-10"
       >
-        <div className="mx-auto max-w-4xl text-center">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-0 bg-center bg-cover opacity-20"
+          style={{ backgroundImage: "url(/assets/generated/pattern.png)" }}
+        />
+        <div className="relative z-10 mx-auto max-w-4xl text-center">
           <h1
             id="nivaara-page-title"
             className="font-display text-black"
